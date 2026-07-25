@@ -1,0 +1,2229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kantin Pintar</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0BA6A0">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kantin Pintar">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1C2321;
+    --ink-soft:#41504C;
+    --mint:#F4FAF7;
+    --mint-deep:#E4F1EA;
+    --card:#FFFFFF;
+    --orange:#FF7A45;
+    --orange-deep:#E8622F;
+    --teal:#0BA6A0;
+    --teal-deep:#088983;
+    --yellow:#FFD166;
+    --line:#E1E8E4;
+    --danger:#E5484D;
+    --shadow: 0 10px 30px rgba(28,35,33,0.08);
+    --shadow-lg: 0 20px 50px rgba(28,35,33,0.16), 0 2px 8px rgba(28,35,33,0.06);
+    --radius: 18px;
+    --grad-orange: linear-gradient(135deg, #FF9466 0%, #FF7A45 45%, #E8622F 100%);
+    --grad-teal: linear-gradient(135deg, #2FD5CC 0%, #0BA6A0 50%, #088983 100%);
+    --grad-ink: linear-gradient(160deg, #232B28 0%, #1C2321 60%, #121614 100%);
+  }
+
+  /* ---------- Tema (bisa diganti lewat menu Pengaturan) ---------- */
+  html[data-theme="robot"]{
+    --ink:#0F1B2D; --ink-soft:#4A5C72;
+    --mint:#EEF3F7; --mint-deep:#DCE6EE; --card:#FFFFFF;
+    --orange:#2F6FED; --orange-deep:#1F54C4;
+    --teal:#00C2D1; --teal-deep:#00969F;
+    --yellow:#8CF6C9; --line:#D3DEE6;
+    --radius:10px;
+  }
+  html[data-theme="horor"]{
+    --ink:#160B10; --ink-soft:#5C4550;
+    --mint:#F5EDEE; --mint-deep:#EADCDD; --card:#FFFFFF;
+    --orange:#B3122B; --orange-deep:#8A0E21;
+    --teal:#5B2A86; --teal-deep:#43206A;
+    --yellow:#FF9F1C; --line:#E3D2D4; --danger:#C81E3A;
+    --radius:8px;
+  }
+  html[data-theme="imut"]{
+    --ink:#4A2B45; --ink-soft:#8C6B87;
+    --mint:#FFF6FA; --mint-deep:#FDE8F1; --card:#FFFFFF;
+    --orange:#FF8FB1; --orange-deep:#F2678F;
+    --teal:#B18CFF; --teal-deep:#9269E8;
+    --yellow:#FFE29A; --line:#F6DCE8;
+    --radius:24px;
+  }
+  html[data-theme="cinta"]{
+    --ink:#3B1220; --ink-soft:#7A4552;
+    --mint:#FFF3F1; --mint-deep:#FCE1DD; --card:#FFFFFF;
+    --orange:#E63950; --orange-deep:#C42440;
+    --teal:#D4A24E; --teal-deep:#B0813A;
+    --yellow:#FFD1DC; --line:#F6D9D4; --danger:#C81E3A;
+    --radius:20px;
+  }
+
+  *{box-sizing:border-box;}
+  body{margin:0;padding:0;}
+  html,body{
+    font-family:'Inter',sans-serif;
+    background:var(--mint);
+    color:var(--ink);
+    min-height:100vh;
+    transition:background .3s ease, color .3s ease;
+  }
+  h1,h2,h3,.brand,.logo{font-family:'Fredoka',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  input,select{font-family:inherit;}
+  ::selection{background:var(--yellow);}
+
+  /* ---------- Scaffolding ---------- */
+  #app{min-height:100vh;display:flex;flex-direction:column;}
+  .hidden{display:none !important;}
+
+  /* ---------- Landing ---------- */
+  .landing{
+    flex:1;display:flex;align-items:center;justify-content:center;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255,122,69,0.16), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(11,166,160,0.16), transparent 40%),
+      var(--ink);
+    color:#fff;position:relative;overflow:hidden;padding:24px;
+  }
+  .landing::before{
+    content:"";position:absolute;inset:0;
+    background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size:22px 22px;
+    pointer-events:none;
+  }
+  .landing-card{
+    position:relative;z-index:1;text-align:center;max-width:520px;
+    animation:floatIn .7s ease;
+  }
+  @keyframes floatIn{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+  .landing .tag{
+    display:inline-block;background:rgba(255,209,102,0.15);color:var(--yellow);
+    padding:6px 14px;border-radius:999px;font-size:13px;font-weight:600;letter-spacing:.03em;
+    margin-bottom:18px;border:1px solid rgba(255,209,102,0.3);
+  }
+  .landing h1{font-size:44px;margin:0 0 10px;line-height:1.1;}
+  .landing h1 span{color:var(--orange);}
+  .landing p{color:#C9D3CF;font-size:16px;margin:0 0 30px;}
+  .landing-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .btn{
+    padding:13px 26px;border-radius:14px;font-weight:600;font-size:15px;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .btn:active{transform:scale(0.96);}
+  .btn-primary{background:var(--grad-orange);color:#fff;box-shadow:0 8px 22px rgba(255,122,69,0.38);}
+  .btn-primary:hover{box-shadow:0 10px 26px rgba(255,122,69,0.5);transform:translateY(-1px);}
+  .btn-ghost{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.25);backdrop-filter:blur(6px);}
+  .btn-ghost:hover{background:rgba(255,255,255,0.16);}
+  .btn-teal{background:var(--grad-teal);color:#fff;box-shadow:0 8px 22px rgba(11,166,160,0.34);}
+  .btn-teal:hover{box-shadow:0 10px 26px rgba(11,166,160,0.46);transform:translateY(-1px);}
+  .btn-line{background:var(--card);color:var(--ink);border:1.5px solid var(--line);}
+  .btn-line:hover{border-color:var(--ink-soft);box-shadow:0 4px 12px rgba(28,35,33,0.06);}
+  .btn-danger{background:#FDEDEE;color:var(--danger);}
+  .btn-danger:hover{background:#FBDCDE;}
+  .btn-sm{padding:8px 14px;font-size:13px;border-radius:10px;}
+  .btn-block{width:100%;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+
+  .landing-tray{
+    position:relative;z-index:1;display:flex;gap:14px;justify-content:center;margin-top:38px;flex-wrap:wrap;
+  }
+  .tray-chip{
+    background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+    padding:8px 14px;border-radius:12px;font-size:22px;
+    animation:bob 3.2s ease-in-out infinite;
+  }
+  .tray-chip:nth-child(2){animation-delay:.4s;}
+  .tray-chip:nth-child(3){animation-delay:.8s;}
+  .tray-chip:nth-child(4){animation-delay:1.2s;}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+  /* ---------- Navbar ---------- */
+  .nav{
+    background:var(--grad-ink);color:#fff;padding:14px 26px;
+    display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:40;
+    box-shadow:0 6px 24px rgba(0,0,0,0.18);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+    backdrop-filter:blur(10px);
+  }
+  .nav .logo{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px;letter-spacing:.01em;}
+  .nav .logo em{
+    font-style:normal;
+    background:var(--grad-orange);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .nav-search{
+    flex:1;max-width:420px;display:flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,0.09);border-radius:12px;padding:9px 14px;
+  }
+  .nav-search input{
+    background:transparent;border:none;outline:none;color:#fff;width:100%;font-size:14px;
+  }
+  .nav-search input::placeholder{color:#9FB0AA;}
+  .nav-tabs{display:flex;gap:6px;}
+  .nav-tab{
+    padding:9px 16px;border-radius:10px;background:transparent;color:#C9D3CF;font-weight:600;font-size:14px;
+  }
+  .nav-tab.active{background:var(--orange);color:#fff;}
+  .nav-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+  .cart-btn{
+    position:relative;background:rgba(255,255,255,0.1);color:#fff;padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;display:flex;gap:8px;align-items:center;
+  }
+  .cart-badge{
+    position:absolute;top:-6px;right:-6px;background:var(--yellow);color:var(--ink);
+    font-size:11px;font-weight:700;border-radius:999px;min-width:20px;height:20px;
+    display:flex;align-items:center;justify-content:center;padding:0 4px;
+  }
+  .user-pill{background:rgba(255,255,255,0.08);padding:8px 12px;border-radius:12px;font-size:13px;color:#C9D3CF;}
+  .user-pill b{color:#fff;}
+
+  /* ---------- Layout ---------- */
+  .page{max-width:1180px;margin:0 auto;padding:26px;width:100%;flex:1;}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+  .section-head h2{margin:0;font-size:22px;}
+  .muted{color:var(--ink-soft);font-size:13px;}
+
+  .chip-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+  .chip{
+    padding:8px 16px;border-radius:999px;background:var(--card);border:1.5px solid var(--line);
+    font-weight:600;font-size:13px;color:var(--ink-soft);
+  }
+  .chip.active{background:var(--grad-ink);color:#fff;border-color:var(--ink);box-shadow:0 6px 16px rgba(28,35,33,0.25);}
+
+  .grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;
+  }
+  .food-card{
+    background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);
+    border:1px solid var(--line);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .food-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad-orange);
+    opacity:0;transition:opacity .2s ease;
+  }
+  .food-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);}
+  .food-card:hover::before{opacity:1;}
+  .food-emoji{
+    font-size:44px;background:var(--mint-deep);border-radius:14px;height:88px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .food-name{font-weight:700;font-size:15.5px;margin:0;}
+  .food-desc{font-size:12.5px;color:var(--ink-soft);margin:0;min-height:32px;line-height:1.4;}
+  .food-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:auto;}
+  .food-price{font-weight:700;color:var(--orange-deep);font-family:'JetBrains Mono',monospace;font-size:14px;}
+  .stock-tag{font-size:11px;color:var(--teal-deep);font-weight:600;}
+  .stock-tag.low{color:var(--danger);}
+  .add-btn{
+    background:var(--ink);color:#fff;width:36px;height:36px;border-radius:10px;font-size:18px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .add-btn:hover{background:var(--orange-deep);}
+  .qty-row{display:flex;align-items:center;gap:8px;background:var(--mint-deep);border-radius:10px;padding:4px;}
+  .qty-row button{width:28px;height:28px;border-radius:8px;background:#fff;font-weight:700;}
+  .qty-row span{min-width:18px;text-align:center;font-weight:700;font-size:13px;}
+
+  .empty-state{
+    text-align:center;padding:60px 20px;color:var(--ink-soft);
+  }
+  .empty-state .em{font-size:46px;display:block;margin-bottom:10px;}
+
+  /* ---------- Modal / Popup ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(18,24,20,0.55);backdrop-filter:blur(3px);
+    display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;
+    animation:fadeIn .18s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .modal{
+    background:var(--card);border-radius:22px;padding:28px;max-width:440px;width:100%;
+    box-shadow:0 30px 70px rgba(0,0,0,0.32), 0 0 0 1px rgba(28,35,33,0.04);
+    position:relative;max-height:88vh;overflow-y:auto;
+    animation:popIn .22s cubic-bezier(.2,.9,.3,1.2);
+  }
+  .modal h2{background:var(--grad-orange);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block;}
+  .modal.wide{max-width:640px;}
+  @keyframes popIn{from{opacity:0;transform:scale(.92) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+  .modal-close{
+    position:absolute;top:16px;right:16px;background:var(--mint-deep);width:32px;height:32px;border-radius:10px;
+    font-size:16px;color:var(--ink-soft);
+  }
+  .modal-close:hover{background:var(--line);}
+  .modal h2{margin:0 0 4px;font-size:21px;}
+  .modal .sub{color:var(--ink-soft);font-size:13.5px;margin:0 0 20px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--ink);}
+  .field input, .field select, .field textarea{
+    width:100%;padding:11px 13px;border-radius:11px;border:1.5px solid var(--line);
+    outline:none;font-size:14px;background:var(--mint);transition:border-color .15s ease;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--orange);}
+  .role-toggle{display:flex;gap:8px;margin-bottom:16px;}
+  .role-opt{
+    flex:1;padding:11px;border-radius:11px;border:1.5px solid var(--line);text-align:center;font-weight:600;font-size:13.5px;color:var(--ink-soft);background:var(--mint);
+  }
+  .role-opt.active{border-color:var(--orange);color:var(--orange-deep);background:#FFF1EA;}
+  .switch-line{text-align:center;font-size:13px;color:var(--ink-soft);margin-top:6px;}
+  .switch-line a{color:var(--orange-deep);font-weight:600;cursor:pointer;text-decoration:none;}
+  .error-msg{
+    background:#FDEDEE;color:var(--danger);padding:9px 12px;border-radius:10px;font-size:12.5px;font-weight:600;margin-bottom:14px;
+  }
+  .success-msg{
+    background:#E7F7EE;color:#1E9E5A;padding:9px 12px;border-radius:10px;font-size:12.5px;font-weight:600;margin-bottom:14px;
+  }
+
+  /* ---------- Password eye toggle ---------- */
+  .pw-wrap{position:relative;}
+  .pw-wrap input{padding-right:44px;}
+  .pw-eye{
+    position:absolute;top:50%;right:5px;transform:translateY(-50%);
+    background:transparent;border:none;font-size:16px;padding:7px;border-radius:8px;
+    color:var(--ink-soft);line-height:1;
+  }
+  .pw-eye:hover{background:var(--mint-deep);}
+
+  /* ---------- Settings menu ---------- */
+  .settings-profile{
+    display:flex;align-items:center;gap:14px;background:var(--mint-deep);
+    border-radius:16px;padding:16px 18px;margin-bottom:20px;
+  }
+  .settings-avatar{
+    width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,var(--orange),var(--teal));
+    color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;
+    font-family:'Fredoka',sans-serif;flex-shrink:0;box-shadow:0 6px 14px rgba(255,122,69,0.30);
+  }
+  .settings-profile .name{font-size:15.5px;font-weight:700;}
+  .settings-profile .role-badge{
+    display:inline-block;margin-top:4px;font-size:11px;font-weight:700;letter-spacing:.02em;
+    padding:3px 9px;border-radius:999px;background:rgba(11,166,160,0.14);color:var(--teal-deep);
+  }
+  .settings-list{display:flex;flex-direction:column;gap:9px;margin-bottom:6px;}
+  .settings-item{
+    display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+    background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;
+    transition:border-color .15s ease, background .15s ease, transform .15s ease;
+  }
+  .settings-item:hover{border-color:var(--teal);background:var(--mint);transform:translateY(-1px);}
+  .settings-item .ic{
+    font-size:18px;width:36px;height:36px;border-radius:10px;background:var(--mint-deep);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .settings-item .tx{flex:1;}
+  .settings-item .tx b{display:block;font-size:14px;}
+  .settings-item .tx small{display:block;color:var(--ink-soft);font-size:12px;margin-top:2px;}
+  .settings-item .chev{color:var(--ink-soft);font-size:18px;}
+
+  /* Theme picker */
+  .theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px;}
+  .theme-card{
+    display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;
+    background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:14px;
+    transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+  }
+  .theme-card:hover{transform:translateY(-2px);border-color:var(--teal);}
+  .theme-card.active{border-color:var(--teal);box-shadow:0 0 0 3px rgba(11,166,160,0.18);}
+  .theme-swatch{display:flex;gap:5px;}
+  .theme-swatch i{width:18px;height:18px;border-radius:6px;display:inline-block;box-shadow:0 0 0 1px rgba(0,0,0,0.06);}
+  .theme-name{font-weight:700;font-size:14px;font-family:'Fredoka',sans-serif;}
+  .theme-desc{font-size:11.5px;color:var(--ink-soft);line-height:1.35;}
+  .theme-check{margin-top:2px;font-size:11px;font-weight:700;color:var(--teal-deep);}
+  @media (max-width:380px){ .theme-grid{grid-template-columns:1fr;} }
+
+  /* Payment method cards */
+  .pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+  .pay-opt{
+    border:1.5px solid var(--line);border-radius:14px;padding:14px;text-align:center;font-weight:600;font-size:13px;
+    display:flex;flex-direction:column;gap:6px;align-items:center;background:var(--mint);
+  }
+  .pay-opt .ic{font-size:22px;}
+  .pay-opt.active{border-color:var(--teal);background:#EAFAF8;color:var(--teal-deep);}
+  .pay-opt.disabled{opacity:.55;cursor:not-allowed;}
+  .pay-opt .pay-number{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);font-weight:600;}
+  .pay-opt .pay-unavailable{font-size:10.5px;color:var(--danger);font-weight:700;}
+
+  /* Cart list */
+  .cart-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line);}
+  .cart-item .em{font-size:26px;background:var(--mint-deep);width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;}
+  .cart-item .info{flex:1;}
+  .cart-item .info .n{font-weight:700;font-size:13.5px;}
+  .cart-item .info .p{font-size:12px;color:var(--ink-soft);font-family:'JetBrains Mono',monospace;}
+  .cart-item .qty-row button{width:24px;height:24px;font-size:13px;}
+  .cart-total-row{display:flex;justify-content:space-between;font-weight:700;font-size:16px;margin:16px 0;padding-top:14px;border-top:2px solid var(--ink);}
+
+  /* Receipt ticket (signature element) */
+  .ticket{
+    background:#fff;border-radius:6px;position:relative;padding:26px 24px 30px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.18);
+  }
+  .ticket::after{
+    content:"";position:absolute;left:0;right:0;bottom:-1px;height:14px;
+    background-image: radial-gradient(circle at 8px 0, transparent 7px, #fff 7.5px);
+    background-size:16px 14px;background-repeat:repeat-x;
+  }
+  .ticket-head{text-align:center;border-bottom:2px dashed var(--line);padding-bottom:14px;margin-bottom:14px;}
+  .ticket-head .check{
+    width:56px;height:56px;border-radius:50%;background:#E7F7EE;color:#1E9E5A;font-size:28px;
+    display:flex;align-items:center;justify-content:center;margin:0 auto 10px;
+    animation:pop .4s cubic-bezier(.3,1.5,.4,1);
+  }
+  @keyframes pop{from{transform:scale(0);}to{transform:scale(1);}}
+  .ticket-head h3{margin:0 0 4px;}
+  .ticket-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;font-family:'JetBrains Mono',monospace;}
+  .ticket-row.total{font-weight:700;font-size:15px;border-top:2px dashed var(--line);padding-top:10px;margin-top:10px;}
+  .ticket-meta{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:12px;}
+
+  /* Admin */
+  .admin-tabs{display:flex;gap:8px;margin-bottom:20px;}
+  .table-wrap{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow-lg);overflow:hidden;border:1px solid var(--line);}
+  tbody tr{transition:background .12s ease;}
+  tbody tr:hover{background:var(--mint);}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th,td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--line);}
+  th{background:var(--mint-deep);font-weight:700;color:var(--ink-soft);font-size:12px;text-transform:uppercase;letter-spacing:.03em;}
+  tr:last-child td{border-bottom:none;}
+  .row-actions{display:flex;gap:6px;}
+  .status-badge{padding:5px 10px;border-radius:999px;font-size:11.5px;font-weight:700;}
+  .status-Menunggu{background:#FFF3E0;color:#C77700;}
+  .status-Diproses{background:#E6F0FF;color:#2563EB;}
+  .status-Siap{background:#F3E8FF;color:#7C3AED;}
+  .status-Selesai{background:#E7F7EE;color:#1E9E5A;}
+  .status-Dibatalkan{background:#FDEDEE;color:var(--danger);}
+  select.status-select{border:1.5px solid var(--line);border-radius:8px;padding:6px 8px;font-size:12.5px;font-weight:600;background:var(--mint);}
+  .promo-toggle{padding:6px 14px;border-radius:999px;font-size:11.5px;font-weight:700;cursor:pointer;display:inline-block;border:none;}
+  .promo-toggle.on{background:#E7F7EE;color:#1E9E5A;}
+  .promo-toggle.off{background:#FDEDEE;color:var(--danger);}
+
+  /* Toast */
+  .toast-wrap{position:fixed;bottom:24px;right:24px;z-index:200;display:flex;flex-direction:column;gap:10px;}
+  .toast{
+    background:var(--ink);color:#fff;padding:13px 18px;border-radius:12px;font-size:13.5px;font-weight:600;
+    box-shadow:0 12px 30px rgba(0,0,0,0.25);display:flex;align-items:center;gap:10px;
+    animation:toastIn .25s ease, toastOut .3s ease 2.7s forwards;
+  }
+  .toast .ic{font-size:16px;}
+  @keyframes toastIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+  @keyframes toastOut{to{opacity:0;transform:translateX(30px);}}
+
+  @media (max-width:720px){
+    .nav{flex-wrap:wrap;}
+    .nav-search{order:3;max-width:100%;}
+    .nav-tabs{order:2;}
+    .landing h1{font-size:32px;}
+    .pay-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* =========================================================
+   STATE (data akun/menu/pesanan/promo disimpan persisten &
+   disinkronkan live lewat storage bersama — lihat bagian
+   PENYIMPANAN & LIVE SYNC di bawah)
+========================================================= */
+const State = {
+  view: 'landing', // landing | buyer | admin
+  authModal: null, // 'login' | 'register' | 'forgot' | null
+  currentUser: null,
+  search: '',
+  category: 'semua', // semua | makanan | minuman
+  cart: [], // {id, qty}
+  cartOpen: false,
+  checkoutOpen: false,
+  paymentMethod: null,
+  receiptOrder: null,
+  adminTab: 'menu', // menu | pesanan | riwayat | promosi
+  menuFormOpen: false,
+  editingItemId: null,
+  forgotStep: 1,
+  chatOpen: false,
+  promoCode: '',
+  appliedPromo: null,
+  promoError: null,
+  promoFormOpen: false,
+  editingPromoId: null,
+  kembalianOrderId: null,
+  kembalianResult: null,
+  selectedKantinId: null, // kantin/server yang sedang dipilih buyer
+  kantinSearch: '',
+  kantinSettingsOpen: false,
+  infoOpen: false,
+  adminCodeOpen: false,
+  settingsOpen: false,
+  changePassOpen: false,
+  theme: 'default',
+  themeModalOpen: false,
+  deleteAccountOpen: false,
+  pickupNoticeOrderId: null,
+  giftBoxOpen: false,
+};
+
+let idCounter = 1;
+function nextId(){ return idCounter++; }
+
+/* Data utama — akan diisi oleh loadData()/initApp() dari storage,
+   bukan langsung dari nilai default di bawah. */
+let users, menuItems, orders, promos, kantins, orderCounter, adminInviteCode;
+
+/* Info developer aplikasi */
+const DEVELOPER_INFO = {
+  nama: 'Muhamad Rizal Febiansyah',
+  umur: '16 Tahun',
+  kelas: 'XI RPL 2',
+  alamat: 'Sukatali, Minamukti, Dusun Cipaku',
+  kontak: '6285965940576',
+  kontakDisplay: '+62 859-6594-0576',
+};
+
+function genInviteCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let s = '';
+  for(let i=0;i<6;i++) s += chars[Math.floor(Math.random()*chars.length)];
+  return s;
+}
+
+function buildDefaultUsers(){
+  return [
+    {username:'souly', password:'souly123', role:'admin', superAdmin:true},
+    {username:'budi', password:'budi123', role:'buyer'},
+  ];
+}
+
+function buildDefaultMenuItems(){
+  return [
+  {id:nextId(),name:'Nasi Goreng Spesial',category:'makanan',price:15000,emoji:'🍛',desc:'Nasi goreng telur & ayam suwir',stock:18},
+  {id:nextId(),name:'Mie Ayam Pangsit',category:'makanan',price:12000,emoji:'🍜',desc:'Mie ayam dengan pangsit rebus',stock:20},
+  {id:nextId(),name:'Ayam Geprek Sambal',category:'makanan',price:14000,emoji:'🍗',desc:'Ayam crispy sambal bawang pedas',stock:15},
+  {id:nextId(),name:'Bakso Urat',category:'makanan',price:13000,emoji:'🥣',desc:'Bakso urat kuah panas + mie',stock:16},
+  {id:nextId(),name:'Soto Ayam',category:'makanan',price:13000,emoji:'🍲',desc:'Soto ayam kuah kuning segar',stock:12},
+  {id:nextId(),name:'Nasi Padang',category:'makanan',price:18000,emoji:'🍱',desc:'Nasi + rendang + sayur singkong',stock:10},
+  {id:nextId(),name:'Gado-Gado',category:'makanan',price:12000,emoji:'🥗',desc:'Sayur rebus, lontong, bumbu kacang',stock:14},
+  {id:nextId(),name:'Pecel Lele',category:'makanan',price:15000,emoji:'🐟',desc:'Lele goreng + sambal + lalapan',stock:9},
+  {id:nextId(),name:'Sate Ayam 10 Tusuk',category:'makanan',price:16000,emoji:'🍢',desc:'Sate ayam bumbu kacang, lontong',stock:11},
+  {id:nextId(),name:'Rendang Daging',category:'makanan',price:20000,emoji:'🥘',desc:'Rendang daging sapi empuk',stock:8},
+  {id:nextId(),name:'Nasi Uduk Komplit',category:'makanan',price:14000,emoji:'🍚',desc:'Nasi uduk, telur, ayam, sambal',stock:13},
+  {id:nextId(),name:'Capcay Kuah',category:'makanan',price:13000,emoji:'🥦',desc:'Aneka sayur & bakso kuah',stock:12},
+  {id:nextId(),name:'Nasi Kuning',category:'makanan',price:13000,emoji:'🍙',desc:'Nasi kuning gurih lengkap lauk',stock:10},
+  {id:nextId(),name:'Tahu Isi',category:'makanan',price:3000,emoji:'🧆',desc:'Tahu isi sayur, gorengan renyah',stock:25},
+  {id:nextId(),name:'Bakwan Jagung',category:'makanan',price:2500,emoji:'🌽',desc:'Gorengan jagung crispy',stock:25},
+  {id:nextId(),name:'Risoles Mayo',category:'makanan',price:4000,emoji:'🥟',desc:'Risoles isi ragout & mayo',stock:20},
+  {id:nextId(),name:'Pisang Goreng',category:'makanan',price:3000,emoji:'🍌',desc:'Pisang goreng crispy madu',stock:22},
+  {id:nextId(),name:'Martabak Mini',category:'makanan',price:8000,emoji:'🥞',desc:'Martabak manis mini coklat keju',stock:14},
+  {id:nextId(),name:'Roti Bakar Coklat',category:'makanan',price:9000,emoji:'🍞',desc:'Roti bakar coklat keju susu',stock:12},
+  {id:nextId(),name:'Kentang Goreng',category:'makanan',price:10000,emoji:'🍟',desc:'French fries saus sambal & mayo',stock:16},
+
+  {id:nextId(),name:'Es Teh Manis',category:'minuman',price:4000,emoji:'🧊',desc:'Teh manis dingin segar',stock:30},
+  {id:nextId(),name:'Es Jeruk Peras',category:'minuman',price:6000,emoji:'🍊',desc:'Jeruk peras asli tanpa gula tambahan',stock:20},
+  {id:nextId(),name:'Es Kopi Susu',category:'minuman',price:9000,emoji:'☕',desc:'Kopi susu gula aren dingin',stock:18},
+  {id:nextId(),name:'Jus Alpukat',category:'minuman',price:10000,emoji:'🥑',desc:'Jus alpukat creamy coklat',stock:12},
+  {id:nextId(),name:'Jus Mangga',category:'minuman',price:9000,emoji:'🥭',desc:'Jus mangga manis segar',stock:14},
+  {id:nextId(),name:'Teh Tawar Hangat',category:'minuman',price:3000,emoji:'🍵',desc:'Teh tawar hangat menenangkan',stock:25},
+  {id:nextId(),name:'Kopi Hitam',category:'minuman',price:5000,emoji:'☕',desc:'Kopi hitam tubruk khas kantin',stock:20},
+  {id:nextId(),name:'Susu Coklat Dingin',category:'minuman',price:7000,emoji:'🥛',desc:'Susu coklat dingin segar',stock:16},
+  {id:nextId(),name:'Es Milo Kental',category:'minuman',price:8000,emoji:'🍫',desc:'Milo dingin kental manis',stock:15},
+  {id:nextId(),name:'Air Mineral',category:'minuman',price:3000,emoji:'💧',desc:'Air mineral botol 600ml',stock:40},
+  {id:nextId(),name:'Es Campur',category:'minuman',price:11000,emoji:'🍧',desc:'Es campur buah & santan',stock:10},
+  {id:nextId(),name:'Lemon Tea',category:'minuman',price:6000,emoji:'🍋',desc:'Teh lemon segar dingin',stock:18},
+  ];
+}
+
+const paymentOptions = [
+  {id:'tunai', label:'Tunai', ic:'💵'},
+  {id:'transfer', label:'Transfer Bank', ic:'🏦'},
+  {id:'dana', label:'DANA', ic:'💙', number:'083131826265'},
+  {id:'shopeepay', label:'ShopeePay', ic:'🧡', number:'083131826265'},
+  {id:'gopay', label:'GoPay', ic:'💚', number:'083131826265'},
+  {id:'qris', label:'QRIS', ic:'🔳', disabled:true},
+];
+
+function buildDefaultPromos(){
+  return [
+    {id:nextId(), code:'HEMAT10', type:'persen', value:10, desc:'Diskon 10% untuk semua menu', active:true},
+    {id:nextId(), code:'KANTIN5K', type:'nominal', value:5000, desc:'Potongan langsung Rp5.000', active:true},
+  ];
+}
+
+const orderStatuses = ['Menunggu','Diproses','Siap','Selesai','Dibatalkan'];
+const statusLabels = {Menunggu:'Menunggu',Diproses:'Diproses',Siap:'Siap Diambil',Selesai:'Selesai',Dibatalkan:'Dibatalkan'};
+
+const ADMIN_WA_NUMBER = '6285965940576';
+const ADMIN_WA_DISPLAY = '+62 859-6594-0576';
+const ADMIN_CODE_WA_MESSAGE = 'halo bang rizal ganteng, aku mau minta kode buat jadi admin nih, bagi dong kode nya';
+
+/* =========================================================
+   HELPERS
+========================================================= */
+function formatRp(n){ return 'Rp' + n.toLocaleString('id-ID'); }
+function findUser(u){ return users.find(x=>x.username.toLowerCase()===u.toLowerCase()); }
+
+/* Field password dengan ikon mata (lihat/sembunyikan) sebelum login */
+function pwField(id, label, placeholder){
+  return `
+  <div class="field">
+    <label>${label}</label>
+    <div class="pw-wrap">
+      <input id="${id}" type="password" placeholder="${placeholder}" autocomplete="off">
+      <button type="button" class="pw-eye" id="eye_${id}" onclick="togglePwd('${id}')" aria-label="Lihat password">👁️</button>
+    </div>
+  </div>`;
+}
+function togglePwd(id){
+  const input = document.getElementById(id);
+  const eye = document.getElementById('eye_'+id);
+  if(!input) return;
+  if(input.type==='password'){ input.type='text'; if(eye) eye.textContent='🙈'; }
+  else{ input.type='password'; if(eye) eye.textContent='👁️'; }
+}
+function cartCount(){ return State.cart.reduce((a,c)=>a+c.qty,0); }
+function cartTotal(){
+  return State.cart.reduce((sum,c)=>{
+    const item = menuItems.find(m=>m.id===c.id);
+    return sum + (item ? item.price*c.qty : 0);
+  },0);
+}
+function toast(msg, ic='✅'){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className='toast';
+  el.innerHTML = `<span class="ic">${ic}</span><span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(()=>el.remove(), 3000);
+}
+function render(){ document.getElementById('app').innerHTML = renderView(); }
+
+/* =========================================================
+   PENYIMPANAN & LIVE SYNC
+   - Akun, menu, pesanan, dan promo disimpan di server lokal
+     (lihat server.js) lewat endpoint /api/data, supaya SEMUA
+     orang yang membuka alamat server ini (admin & buyer, dari
+     perangkat manapun di jaringan WiFi yang sama) memakai data
+     yang sama secara real-time.
+   - localStorage tetap dipakai sebagai cadangan darurat kalau
+     koneksi ke server sedang terputus, supaya tampilan tidak
+     tiba-tiba kosong.
+   - Setiap beberapa detik, aplikasi mengambil data terbaru dari
+     server supaya admin bisa melihat pesanan/aktivitas buyer
+     secara live tanpa refresh manual.
+========================================================= */
+const DATA_KEY = 'kantin_pintar_data_v1';
+const SESSION_KEY = 'kantin_pintar_session_v1';
+
+async function loadData(){
+  try{
+    const res = await fetch('/api/data');
+    if(!res.ok) throw new Error('server tidak merespon');
+    const json = await res.json();
+    if(json && Object.keys(json).length){
+      try{ localStorage.setItem(DATA_KEY, JSON.stringify(json)); }catch(e){}
+      return json;
+    }
+    return null;
+  }catch(e){
+    console.error('Gagal mengambil data dari server, memakai cadangan lokal:', e);
+    try{
+      const raw = localStorage.getItem(DATA_KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e2){ return null; }
+  }
+}
+
+async function saveData(){
+  const payload = { users, menuItems, orders, promos, kantins, idCounter, orderCounter, adminInviteCode };
+  try{ localStorage.setItem(DATA_KEY, JSON.stringify(payload)); }catch(e){}
+  try{
+    const res = await fetch('/api/data', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if(!res.ok) throw new Error('server menolak simpan');
+  }catch(e){
+    console.error('Gagal menyimpan data ke server:', e);
+  }
+}
+
+function saveSession(user, selectedKantinId){
+  try{ localStorage.setItem(SESSION_KEY, JSON.stringify({username:user.username, role:user.role, selectedKantinId: selectedKantinId!=null?selectedKantinId:null})); }catch(e){}
+}
+function clearSession(){
+  try{ localStorage.removeItem(SESSION_KEY); }catch(e){}
+}
+function loadSession(){
+  try{
+    const raw = localStorage.getItem(SESSION_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+
+function renderLoadingScreen(){
+  return `
+  <div class="landing">
+    <div class="landing-card">
+      <span class="tag">🍽️ Sistem Kantin Digital</span>
+      <h1>Memuat <span>Kantin Pintar</span>...</h1>
+      <p>Menyiapkan data akun, menu, dan pesanan.</p>
+    </div>
+  </div>`;
+}
+
+async function initApp(){
+  document.getElementById('app').innerHTML = renderLoadingScreen();
+
+  let data = await loadData();
+  const isFirstRun = !data;
+  if(isFirstRun){
+    users = buildDefaultUsers();
+    kantins = [];
+    menuItems = [];
+    promos = [];
+    orders = [];
+    orderCounter = 1000;
+  } else {
+    users = data.users || buildDefaultUsers();
+    kantins = data.kantins || [];
+    menuItems = data.menuItems || [];
+    orders = data.orders || [];
+    promos = data.promos || [];
+    idCounter = data.idCounter || idCounter;
+    orderCounter = data.orderCounter || 1000;
+  }
+
+  let needsSave = isFirstRun;
+
+  // Pastikan selalu ada satu Admin Utama (super admin). Akun 'souly' otomatis
+  // dijadikan Admin Utama; kalau tidak ada, admin pertama yang ditemukan
+  // dipromosikan (jaga-jaga untuk data lama).
+  if(!users.some(u=>u.superAdmin)){
+    const souly = users.find(u=>u.username==='souly');
+    const fallbackAdmin = souly || users.find(u=>u.role==='admin');
+    if(fallbackAdmin){
+      fallbackAdmin.role = 'admin';
+      fallbackAdmin.superAdmin = true;
+      needsSave = true;
+    }
+  }
+
+  // Kode khusus yang wajib diminta ke Admin Utama sebelum bisa daftar
+  // sebagai admin/membuat kantin baru.
+  adminInviteCode = (data && data.adminInviteCode) || genInviteCode();
+  if(!data || !data.adminInviteCode) needsSave = true;
+
+  // Setiap admin wajib punya kantin/server sendiri agar tidak menubruk
+  // data admin lain. Ini juga otomatis memigrasi akun admin lama (dari
+  // versi sebelum fitur multi-kantin) yang belum punya kantinId.
+  users.forEach(u=>{
+    if(u.role==='admin' && !u.kantinId){
+      const own = {id:nextId(), name: isFirstRun ? 'Kantin Utama' : `Kantin ${u.username}`, emoji:'🍽️', ownerUsername:u.username};
+      kantins.push(own);
+      u.kantinId = own.id;
+      needsSave = true;
+    }
+  });
+
+  // Data menu/promo/pesanan dari sebelum fitur multi-kantin (belum
+  // punya kantinId) otomatis dimasukkan ke kantin pertama yang ada.
+  const fallbackKantinId = kantins[0] ? kantins[0].id : null;
+  if(fallbackKantinId!=null){
+    [menuItems, promos, orders].forEach(list=>{
+      list.forEach(item=>{ if(item.kantinId==null){ item.kantinId = fallbackKantinId; needsSave = true; } });
+    });
+  }
+  if(isFirstRun){
+    menuItems = buildDefaultMenuItems().map(m=>({...m, kantinId: fallbackKantinId}));
+    promos = buildDefaultPromos().map(p=>({...p, kantinId: fallbackKantinId}));
+  }
+
+  if(needsSave) await saveData();
+
+  // Lanjutkan sesi login sebelumnya (di browser ini) kalau masih valid,
+  // supaya user tidak perlu login ulang setiap refresh.
+  const session = loadSession();
+  if(session){
+    const u = findUser(session.username);
+    if(u && u.role===session.role){
+      State.currentUser = u;
+      State.view = u.role==='admin' ? 'admin' : 'buyer';
+      if(u.role==='buyer' && session.selectedKantinId!=null && kantins.find(k=>k.id===session.selectedKantinId)){
+        State.selectedKantinId = session.selectedKantinId;
+      }
+    } else {
+      clearSession();
+    }
+  }
+
+  render();
+  startLiveSync();
+}
+
+let liveSyncTimer = null;
+function startLiveSync(){
+  if(liveSyncTimer) return;
+  liveSyncTimer = setInterval(pollForUpdates, 3500);
+}
+
+function isSafeToAutoRerender(){
+  if(State.authModal || State.menuFormOpen || State.promoFormOpen || State.checkoutOpen ||
+     State.kembalianOrderId || State.chatOpen || State.cartOpen || State.kantinSettingsOpen ||
+     State.infoOpen || State.adminCodeOpen || State.themeModalOpen ||
+     State.deleteAccountOpen || State.pickupNoticeOrderId || State.giftBoxOpen) return false;
+  const active = document.activeElement;
+  if(active && ['INPUT','TEXTAREA','SELECT'].includes(active.tagName)) return false;
+  return true;
+}
+
+async function pollForUpdates(){
+  const data = await loadData();
+  if(!data) return;
+
+  const current = JSON.stringify({users, menuItems, orders, promos, kantins, idCounter, orderCounter});
+  const incoming = JSON.stringify({
+    users: data.users||users, menuItems: data.menuItems||menuItems,
+    orders: data.orders||orders, promos: data.promos||promos,
+    kantins: data.kantins||kantins,
+    idCounter: data.idCounter||idCounter, orderCounter: data.orderCounter||orderCounter
+  });
+  if(current===incoming) return;
+
+  const prevOrderIds = new Set(orders.map(o=>o.id));
+  const newIncomingOrders = (data.orders||[]).filter(o=>!prevOrderIds.has(o.id));
+  const prevPickupNoticeAt = {};
+  orders.forEach(o=>{ if(o.pickupNotice) prevPickupNoticeAt[o.id]=o.pickupNotice.sentAt; });
+  const prevGiftPromoIds = new Set(myGiftPromos().map(p=>p.id));
+
+  users = data.users || users;
+  menuItems = data.menuItems || menuItems;
+  orders = data.orders || orders;
+  promos = data.promos || promos;
+  kantins = data.kantins || kantins;
+  idCounter = Math.max(idCounter, data.idCounter||0);
+  orderCounter = Math.max(orderCounter, data.orderCounter||0);
+
+  if(State.currentUser && State.currentUser.role==='admin' && newIncomingOrders.length){
+    newIncomingOrders.filter(o=>o.kantinId===State.currentUser.kantinId)
+      .forEach(o=> toast(`Pesanan baru #${o.id} dari ${o.buyer}`,'🔔'));
+  }
+
+  if(State.currentUser && State.currentUser.role==='buyer'){
+    orders.filter(o=>o.buyer===State.currentUser.username && o.pickupNotice)
+      .filter(o=>prevPickupNoticeAt[o.id] !== o.pickupNotice.sentAt)
+      .forEach(o=> toast(`Pesanan #${o.id} bisa diambil ${o.pickupNotice.time}${o.pickupNotice.note?' — '+o.pickupNotice.note:''}`,'🔔'));
+
+    myGiftPromos().filter(p=>!prevGiftPromoIds.has(p.id))
+      .forEach(p=> toast(`Kamu dapat hadiah promo baru: ${p.code}! Cek Kotak Hadiah.`,'🎁'));
+  }
+
+  if(isSafeToAutoRerender()) render();
+}
+
+/* =========================================================
+   RENDER: ROOT
+========================================================= */
+function renderView(){
+  let html = '';
+  if(State.view==='landing') html += renderLanding();
+  else if(State.view==='buyer') html += renderBuyer();
+  else if(State.view==='admin') html += renderAdmin();
+
+  if(State.authModal) html += renderAuthModal();
+  if(State.cartOpen) html += renderCartModal();
+  if(State.checkoutOpen) html += renderCheckoutModal();
+  if(State.receiptOrder) html += renderReceiptModal();
+  if(State.menuFormOpen) html += renderMenuFormModal();
+  if(State.chatOpen) html += renderChatModal();
+  if(State.kembalianOrderId) html += renderKembalianModal();
+  if(State.promoFormOpen) html += renderPromoFormModal();
+  if(State.kantinSettingsOpen) html += renderKantinSettingsModal();
+  if(State.infoOpen) html += renderInfoModal();
+  if(State.adminCodeOpen) html += renderAdminCodeModal();
+  if(State.settingsOpen) html += renderSettingsModal();
+  if(State.changePassOpen) html += renderChangePasswordModal();
+  if(State.themeModalOpen) html += renderThemeModal();
+  if(State.deleteAccountOpen) html += renderDeleteAccountModal();
+  if(State.pickupNoticeOrderId) html += renderPickupNoticeModal();
+  if(State.giftBoxOpen) html += renderGiftBoxModal();
+  return html;
+}
+
+/* =========================================================
+   CHAT ADMIN (buyer)
+========================================================= */
+function openChat(){ State.chatOpen=true; render(); }
+function closeChat(){ State.chatOpen=false; render(); }
+function renderChatModal(){
+  return `
+  <div class="overlay" onclick="if(event.target===this) closeChat()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeChat()">✕</button>
+      <h2>Hubungi Admin Kantin</h2>
+      <p class="sub">Ada pertanyaan soal pesanan atau menu? Chat admin langsung di WhatsApp.</p>
+      <div style="background:var(--mint-deep);border-radius:14px;padding:20px;text-align:center;margin-bottom:16px;">
+        <div style="font-size:34px;">💬</div>
+        <p class="mono" style="font-weight:700;font-size:17px;margin:10px 0 0;">${ADMIN_WA_DISPLAY}</p>
+      </div>
+      <a class="btn btn-teal btn-block" href="https://wa.me/${ADMIN_WA_NUMBER}" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box;">Chat via WhatsApp</a>
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   INFO DEVELOPER
+========================================================= */
+function openInfo(){ State.infoOpen=true; render(); }
+function closeInfo(){ State.infoOpen=false; render(); }
+function renderInfoModal(){
+  const d = DEVELOPER_INFO;
+  return `
+  <div class="overlay" onclick="if(event.target===this) closeInfo()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeInfo()">✕</button>
+      <h2>ℹ️ Info Developer</h2>
+      <p class="sub">Aplikasi Kantin Pintar dikembangkan oleh:</p>
+      <div style="background:var(--mint-deep);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;">
+        <div><span class="muted" style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.03em;">Nama</span><b style="font-size:14.5px;">${d.nama}</b></div>
+        <div><span class="muted" style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.03em;">Umur</span><b style="font-size:14.5px;">${d.umur}</b></div>
+        <div><span class="muted" style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.03em;">Kelas</span><b style="font-size:14.5px;">${d.kelas}</b></div>
+        <div><span class="muted" style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:.03em;">Alamat</span><b style="font-size:14.5px;">${d.alamat}</b></div>
+      </div>
+      <a class="btn btn-teal btn-block" href="https://wa.me/${d.kontak}" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box;margin-top:16px;">💬 Kontak Developer · ${d.kontakDisplay}</a>
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   KODE PENDAFTARAN ADMIN (khusus Admin Utama)
+========================================================= */
+function openAdminCode(){
+  if(!State.currentUser || !State.currentUser.superAdmin) return;
+  State.adminCodeOpen=true;
+  render();
+}
+function closeAdminCode(){ State.adminCodeOpen=false; render(); }
+function renderAdminCodeModal(){
+  return `
+  <div class="overlay" onclick="if(event.target===this) closeAdminCode()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeAdminCode()">✕</button>
+      <h2>🔑 Kode Pendaftaran Admin</h2>
+      <p class="sub">Bagikan kode ini hanya ke orang yang kamu izinkan membuat akun admin & kantin baru.</p>
+      <div style="background:var(--mint-deep);border-radius:14px;padding:22px;text-align:center;margin-bottom:16px;">
+        <p class="mono" style="font-weight:700;font-size:24px;letter-spacing:.08em;margin:0;">${adminInviteCode}</p>
+      </div>
+      <button class="btn btn-line btn-block" onclick="regenerateAdminCode()">🔄 Buat Kode Baru</button>
+      <p class="muted" style="text-align:center;margin-top:10px;">Membuat kode baru akan membuat kode lama tidak berlaku lagi.</p>
+    </div>
+  </div>`;
+}
+function regenerateAdminCode(){
+  adminInviteCode = genInviteCode();
+  saveData();
+  render();
+  toast('Kode admin baru berhasil dibuat','🔑');
+}
+
+/* =========================================================
+   PENGATURAN (menu akun: ubah password, keluar)
+========================================================= */
+function openSettings(){ State.settingsOpen=true; render(); }
+function closeSettings(){ State.settingsOpen=false; render(); }
+
+function renderSettingsModal(){
+  const u = State.currentUser;
+  const roleLabel = u.role==='admin' ? (u.superAdmin?'Admin Utama':'Admin Kantin') : 'Buyer';
+  const hasServerUrl = (typeof ubahAlamatServer === 'function');
+  return `
+  <div class="overlay" onclick="if(event.target===this) closeSettings()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeSettings()">✕</button>
+      <h2>⚙️ Pengaturan</h2>
+      <p class="sub">Kelola akun dan preferensi aplikasimu.</p>
+
+      <div class="settings-profile">
+        <div class="settings-avatar">${(u.username||'?').charAt(0).toUpperCase()}</div>
+        <div>
+          <div class="name">${u.username}</div>
+          <span class="role-badge">${roleLabel}</span>
+        </div>
+      </div>
+
+      <div class="settings-list">
+        <button class="settings-item" onclick="closeSettings();openChangePassword();">
+          <span class="ic">🔑</span>
+          <span class="tx"><b>Ubah Password</b><small>Perbarui password akunmu</small></span>
+          <span class="chev">›</span>
+        </button>
+        <button class="settings-item" onclick="closeSettings();openThemeModal();">
+          <span class="ic">🎨</span>
+          <span class="tx"><b>Ubah Tema</b><small>${(THEMES.find(t=>t.id===State.theme)||THEMES[0]).emoji} ${(THEMES.find(t=>t.id===State.theme)||THEMES[0]).name}</small></span>
+          <span class="chev">›</span>
+        </button>
+        ${hasServerUrl ? `
+        <button class="settings-item" onclick="closeSettings();ubahAlamatServer();">
+          <span class="ic">🌐</span>
+          <span class="tx"><b>Alamat Server</b><small>${(typeof API_BASE!=='undefined' && API_BASE) ? API_BASE : 'Belum diatur'}</small></span>
+          <span class="chev">›</span>
+        </button>` : ''}
+        <button class="settings-item" onclick="closeSettings();openInfo();">
+          <span class="ic">ℹ️</span>
+          <span class="tx"><b>Info Developer</b><small>Tentang aplikasi ini</small></span>
+          <span class="chev">›</span>
+        </button>
+        ${u.role==='buyer' ? `
+        <button class="settings-item" onclick="closeSettings();openGiftBox();">
+          <span class="ic">🎁</span>
+          <span class="tx"><b>Kotak Hadiah</b><small>${myGiftPromos().length ? myGiftPromos().length+' promo spesial menunggu' : 'Belum ada promo spesial'}</small></span>
+          <span class="chev">›</span>
+        </button>
+        <button class="settings-item" style="border-color:#F3C6C6;" onclick="closeSettings();openDeleteAccount();">
+          <span class="ic">🗑️</span>
+          <span class="tx"><b>Hapus Akun</b><small>Hapus akun buyer ini secara permanen</small></span>
+          <span class="chev">›</span>
+        </button>` : ''}
+      </div>
+
+      <button class="btn btn-danger btn-block" style="margin-top:18px;" onclick="closeSettings();logout();">🚪 Keluar Akun</button>
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   TEMA APLIKASI
+========================================================= */
+const THEME_KEY = 'kantin_theme';
+const THEMES = [
+  {id:'default', name:'Segar', emoji:'🌿', desc:'Teal & oranye — tampilan asli Kantin Pintar', colors:['#0BA6A0','#FF7A45','#F4FAF7']},
+  {id:'robot',   name:'Robot',  emoji:'🤖', desc:'Biru elektrik & abu teknologi yang futuristik', colors:['#2F6FED','#00C2D1','#EEF3F7']},
+  {id:'horor',   name:'Horor',  emoji:'👻', desc:'Merah darah & ungu gelap yang mencekam', colors:['#B3122B','#5B2A86','#F5EDEE']},
+  {id:'imut',    name:'Imut',   emoji:'🐰', desc:'Pink & ungu pastel yang menggemaskan', colors:['#FF8FB1','#B18CFF','#FFF6FA']},
+  {id:'cinta',   name:'Cinta',  emoji:'💖', desc:'Merah mawar & emas yang romantis', colors:['#E63950','#D4A24E','#FFF3F1']},
+];
+
+function getSavedTheme(){
+  try{ return localStorage.getItem(THEME_KEY) || 'default'; }catch(e){ return 'default'; }
+}
+
+function applyTheme(themeId){
+  const valid = THEMES.some(t=>t.id===themeId) ? themeId : 'default';
+  if(valid==='default'){ document.documentElement.removeAttribute('data-theme'); }
+  else{ document.documentElement.setAttribute('data-theme', valid); }
+  State.theme = valid;
+  try{ localStorage.setItem(THEME_KEY, valid); }catch(e){}
+}
+
+function openThemeModal(){ State.themeModalOpen=true; render(); }
+function closeThemeModal(){ State.themeModalOpen=false; render(); }
+
+function pilihTema(themeId){
+  applyTheme(themeId);
+  toast('Tema aplikasi diganti','🎨');
+  render();
+}
+
+function renderThemeModal(){
+  return `
+  <div class="overlay" onclick="if(event.target===this) closeThemeModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeThemeModal()">✕</button>
+      <h2>🎨 Ubah Tema</h2>
+      <p class="sub">Pilih tampilan favoritmu untuk aplikasi Kantin Pintar.</p>
+      <div class="theme-grid">
+        ${THEMES.map(t=>`
+          <button class="theme-card ${State.theme===t.id?'active':''}" onclick="pilihTema('${t.id}')">
+            <span class="theme-swatch">${t.colors.map(c=>`<i style="background:${c}"></i>`).join('')}</span>
+            <span class="theme-name">${t.emoji} ${t.name}</span>
+            <span class="theme-desc">${t.desc}</span>
+            ${State.theme===t.id ? '<span class="theme-check">✓ Sedang dipakai</span>' : ''}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function openChangePassword(){ State.changePassOpen=true; State._authError=null; render(); }
+function closeChangePassword(){ State.changePassOpen=false; State._authError=null; render(); }
+
+function renderChangePasswordModal(){
+  return `
+  <div class="overlay" onclick="if(event.target===this) closeChangePassword()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeChangePassword()">✕</button>
+      <h2>🔑 Ubah Password</h2>
+      <p class="sub">Masukkan password lama, lalu buat password baru.</p>
+      ${State._authError ? `<div class="error-msg">${State._authError}</div>` : ''}
+      ${pwField('curPass','Password Saat Ini','Masukkan password saat ini')}
+      ${pwField('newPassC','Password Baru','Buat password baru')}
+      ${pwField('newPass2C','Konfirmasi Password Baru','Ulangi password baru')}
+      <button class="btn btn-primary btn-block" onclick="doChangePassword()">Simpan Password</button>
+    </div>
+  </div>`;
+}
+
+function doChangePassword(){
+  const cur = document.getElementById('curPass').value;
+  const p = document.getElementById('newPassC').value;
+  const p2 = document.getElementById('newPass2C').value;
+  const user = State.currentUser;
+  if(user.password !== cur){ State._authError='Password saat ini salah.'; render(); return; }
+  if(p.length<3){ State._authError='Password baru minimal 3 karakter.'; render(); return; }
+  if(p!==p2){ State._authError='Konfirmasi password baru tidak cocok.'; render(); return; }
+  user.password = p;
+  saveData();
+  State.changePassOpen=false;
+  State._authError=null;
+  render();
+  toast('Password berhasil diubah','🔐');
+}
+
+/* =========================================================
+   HAPUS AKUN (khusus buyer)
+========================================================= */
+function openDeleteAccount(){ State.deleteAccountOpen=true; State._authError=null; render(); }
+function closeDeleteAccount(){ State.deleteAccountOpen=false; State._authError=null; render(); }
+
+function renderDeleteAccountModal(){
+  return `
+  <div class="overlay" onclick="if(event.target===this) closeDeleteAccount()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeDeleteAccount()">✕</button>
+      <h2>🗑️ Hapus Akun</h2>
+      <p class="sub">Tindakan ini permanen. Akun dan sesi masuk kamu akan hilang dan tidak bisa dikembalikan.</p>
+      ${State._authError ? `<div class="error-msg">${State._authError}</div>` : ''}
+      ${pwField('delAccPass','Konfirmasi Password','Masukkan password akunmu untuk konfirmasi')}
+      <button class="btn btn-danger btn-block" onclick="doDeleteAccount()">Ya, Hapus Akun Saya</button>
+    </div>
+  </div>`;
+}
+
+function doDeleteAccount(){
+  const pass = document.getElementById('delAccPass').value;
+  const user = State.currentUser;
+  if(!user || user.password !== pass){ State._authError='Password salah.'; render(); return; }
+  users = users.filter(u=>u.username.toLowerCase()!==user.username.toLowerCase());
+  saveData();
+  clearSession();
+  State.deleteAccountOpen=false;
+  State._authError=null;
+  State.currentUser=null;
+  State.view='landing';
+  State.selectedKantinId=null;
+  State.cart=[];
+  render();
+  toast('Akun berhasil dihapus','🗑️');
+}
+
+/* =========================================================
+   KOTAK HADIAH (promo spesial dari admin untuk buyer tertentu)
+========================================================= */
+function myGiftPromos(){
+  if(!State.currentUser || State.currentUser.role!=='buyer') return [];
+  const uname = State.currentUser.username.toLowerCase();
+  return promos.filter(p=> p.active && p.assignedTo && p.assignedTo.toLowerCase()===uname);
+}
+
+function openGiftBox(){ State.giftBoxOpen=true; render(); }
+function closeGiftBox(){ State.giftBoxOpen=false; render(); }
+
+function renderGiftBoxModal(){
+  const gifts = myGiftPromos();
+  return `
+  <div class="overlay" onclick="if(event.target===this) closeGiftBox()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeGiftBox()">✕</button>
+      <h2>🎁 Kotak Hadiah</h2>
+      <p class="sub">Promo spesial yang dikirim admin khusus untukmu.</p>
+      ${gifts.length ? `
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        ${gifts.map(p=>{
+          const kantin = kantins.find(k=>k.id===p.kantinId);
+          return `
+          <div style="background:linear-gradient(135deg,#FFF6FA,#F3E8FF);border:1.5px solid #E7CFF7;border-radius:16px;padding:16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+              <span style="background:var(--grad-teal);color:#fff;font-weight:700;font-size:12px;padding:5px 10px;border-radius:999px;">${p.type==='persen'?p.value+'% OFF':formatRp(p.value)+' OFF'}</span>
+              <span class="mono" style="font-weight:700;font-size:14px;">${p.code}</span>
+            </div>
+            <p style="margin:0 0 4px;font-size:13.5px;color:var(--ink);">${p.desc || 'Promo spesial dari admin'}</p>
+            <p class="muted" style="font-size:12px;margin:0 0 12px;">Berlaku di ${kantin?kantin.emoji+' '+kantin.name:'kantin ini'}</p>
+            <button class="btn btn-primary btn-block btn-sm" onclick="pakaiHadiah(${p.id})">🎉 Gunakan Sekarang</button>
+          </div>`;
+        }).join('')}
+      </div>` : `<div class="empty-state"><span class="em">🎁</span>Belum ada hadiah promo untukmu saat ini. Cek lagi nanti ya!</div>`}
+    </div>
+  </div>`;
+}
+
+function pakaiHadiah(id){
+  const p = promos.find(x=>x.id===id);
+  if(!p || !p.active){ toast('Promo sudah tidak berlaku','⚠️'); return; }
+  if(State.selectedKantinId !== p.kantinId){
+    State.selectedKantinId = p.kantinId;
+    saveSession(State.currentUser, p.kantinId);
+    State.cart = [];
+  }
+  State.appliedPromo = p;
+  State.promoCode = p.code;
+  State.giftBoxOpen = false;
+  State.cartOpen = true;
+  render();
+  toast(`Promo "${p.code}" siap dipakai di keranjang!`,'🎁');
+}
+
+/* =========================================================
+   LANDING
+========================================================= */
+function renderLanding(){
+  return `
+  <div class="landing">
+    <div class="landing-card">
+      <span class="tag">🍽️ Sistem Kantin Digital</span>
+      <h1>Selamat Datang di <span>Kantin Pintar</span></h1>
+      <p>Pesan makanan &amp; minuman favoritmu tanpa antre. Cari menu, bayar, dan pesanan siap diambil.</p>
+      <div class="landing-actions">
+        <button class="btn btn-primary" onclick="openAuth('login')">Masuk</button>
+        <button class="btn btn-ghost" onclick="openAuth('register')">Daftar Akun</button>
+        <button class="btn btn-ghost" onclick="openInfo()">ℹ️ Info</button>
+      </div>
+      <div class="landing-tray">
+        <div class="tray-chip">🍛</div>
+        <div class="tray-chip">🍜</div>
+        <div class="tray-chip">🥤</div>
+        <div class="tray-chip">🍗</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* =========================================================
+   AUTH MODAL (Login / Register / Forgot password)
+========================================================= */
+function renderAuthModal(){
+  const m = State.authModal;
+  let inner = '';
+  if(m==='login') inner = renderLoginForm();
+  if(m==='register') inner = renderRegisterForm();
+  if(m==='forgot') inner = renderForgotForm();
+  return `
+  <div class="overlay" onclick="if(event.target===this) closeAuth()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeAuth()">✕</button>
+      ${inner}
+    </div>
+  </div>`;
+}
+
+function renderLoginForm(){
+  return `
+  <h2>Masuk ke Kantin</h2>
+  <p class="sub">Gunakan akun buyer atau admin kamu.</p>
+  ${State._authError ? `<div class="error-msg">${State._authError}</div>` : ''}
+  <div class="field"><label>Username</label><input id="loginUser" type="text" placeholder="Masukkan username" autocomplete="off"></div>
+  ${pwField('loginPass','Password','Masukkan password')}
+  <button class="btn btn-primary btn-block" onclick="doLogin()">Masuk</button>
+  <p class="switch-line">Lupa password? <a onclick="openAuth('forgot')">Reset di sini</a></p>
+  <p class="switch-line">Belum punya akun? <a onclick="openAuth('register')">Daftar sekarang</a></p>
+  `;
+}
+
+function renderRegisterForm(){
+  const role = State._regRole || 'buyer';
+  return `
+  <h2>Daftar Akun Baru</h2>
+  <p class="sub">Username &amp; password bebas, minimal 3 karakter.</p>
+  ${State._authError ? `<div class="error-msg">${State._authError}</div>` : ''}
+  <div class="role-toggle">
+    <div class="role-opt ${role==='buyer'?'active':''}" onclick="setRegRole('buyer')">🧑‍🎓 Buyer</div>
+    <div class="role-opt ${role==='admin'?'active':''}" onclick="setRegRole('admin')">🛠️ Admin</div>
+  </div>
+  <div class="field"><label>Username</label><input id="regUser" type="text" placeholder="Buat username bebas" autocomplete="off"></div>
+  ${pwField('regPass','Password','Buat password bebas')}
+  ${pwField('regPass2','Konfirmasi Password','Ulangi password')}
+  ${role==='admin' ? `
+  <div class="field"><label>Nama Kantin / Server Baru</label><input id="regKantinName" type="text" placeholder="Contoh: Kantin Gedung B"></div>
+  <div class="field"><label>Kode Admin</label><input id="regAdminCode" type="text" placeholder="Minta kode ke Admin Utama" autocomplete="off"></div>
+  <p class="muted" style="margin:-8px 0 10px;">Kantin ini khusus milik akunmu — menu, pesanan, dan promonya terpisah dari admin lain. Kode admin wajib diminta langsung ke Admin Utama.</p>
+  <a class="btn btn-teal btn-block" href="https://wa.me/${ADMIN_WA_NUMBER}?text=${encodeURIComponent(ADMIN_CODE_WA_MESSAGE)}" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box;margin-bottom:16px;">💬 Minta Kode Admin ke ${ADMIN_WA_DISPLAY}</a>
+  ` : ''}
+  <button class="btn btn-teal btn-block" onclick="doRegister()">Buat Akun</button>
+  <p class="switch-line">Sudah punya akun? <a onclick="openAuth('login')">Masuk</a></p>
+  `;
+}
+
+function renderForgotForm(){
+  if(State.forgotStep===1){
+    return `
+    <h2>Lupa Password</h2>
+    <p class="sub">Masukkan username akunmu untuk membuat password baru.</p>
+    ${State._authError ? `<div class="error-msg">${State._authError}</div>` : ''}
+    <div class="field"><label>Username</label><input id="forgotUser" type="text" placeholder="Masukkan username" autocomplete="off"></div>
+    <button class="btn btn-primary btn-block" onclick="doForgotCheck()">Lanjutkan</button>
+    <p class="switch-line">Ingat password? <a onclick="openAuth('login')">Kembali masuk</a></p>
+    `;
+  }
+  return `
+    <h2>Buat Password Baru</h2>
+    <p class="sub">Untuk akun <b>${State._forgotUsername}</b></p>
+    ${State._authError ? `<div class="error-msg">${State._authError}</div>` : ''}
+    ${pwField('newPass','Password Baru','Password baru')}
+    ${pwField('newPass2','Konfirmasi Password Baru','Ulangi password baru')}
+    <button class="btn btn-primary btn-block" onclick="doForgotReset()">Simpan Password</button>
+  `;
+}
+
+function openAuth(type){
+  State.authModal = type;
+  State._authError = null;
+  State.forgotStep = 1;
+  render();
+}
+function closeAuth(){ State.authModal = null; render(); }
+function setRegRole(r){ State._regRole = r; render(); }
+
+function doLogin(){
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if(!u || !p){ State._authError='Username dan password wajib diisi.'; render(); return; }
+  const user = findUser(u);
+  if(!user || user.password !== p){ State._authError='Username atau password salah.'; render(); return; }
+  State.currentUser = user;
+  State.authModal = null;
+  State.view = user.role==='admin' ? 'admin' : 'buyer';
+  State.selectedKantinId = null;
+  saveSession(user, null);
+  render();
+  toast(`Selamat datang, ${user.username}!`,'👋');
+}
+
+function doRegister(){
+  const u = document.getElementById('regUser').value.trim();
+  const p = document.getElementById('regPass').value;
+  const p2 = document.getElementById('regPass2').value;
+  const role = State._regRole || 'buyer';
+  const kantinName = role==='admin' ? document.getElementById('regKantinName').value.trim() : '';
+  const adminCode = role==='admin' ? document.getElementById('regAdminCode').value.trim() : '';
+  if(u.length<3){ State._authError='Username minimal 3 karakter.'; render(); return; }
+  if(p.length<3){ State._authError='Password minimal 3 karakter.'; render(); return; }
+  if(p!==p2){ State._authError='Konfirmasi password tidak cocok.'; render(); return; }
+  if(findUser(u)){ State._authError='Username sudah dipakai, pilih yang lain.'; render(); return; }
+  if(role==='admin' && kantinName.length<3){ State._authError='Nama kantin/server minimal 3 karakter.'; render(); return; }
+  if(role==='admin' && adminCode.toUpperCase()!==String(adminInviteCode).toUpperCase()){ State._authError='Kode admin salah. Minta kode ke Admin Utama.'; render(); return; }
+
+  const newUser = {username:u, password:p, role};
+  if(role==='admin'){
+    const newKantin = {id:nextId(), name:kantinName, emoji:'🍽️', ownerUsername:u};
+    kantins.push(newKantin);
+    newUser.kantinId = newKantin.id;
+  }
+  users.push(newUser);
+  saveData();
+  State.authModal = 'login';
+  State._authError = null;
+  render();
+  toast(role==='admin' ? `Akun & kantin "${kantinName}" berhasil dibuat.` : 'Akun berhasil dibuat, silakan masuk.', '🎉');
+}
+
+function doForgotCheck(){
+  const u = document.getElementById('forgotUser').value.trim();
+  if(!findUser(u)){ State._authError='Username tidak ditemukan.'; render(); return; }
+  State._forgotUsername = u;
+  State.forgotStep = 2;
+  State._authError = null;
+  render();
+}
+
+function doForgotReset(){
+  const p = document.getElementById('newPass').value;
+  const p2 = document.getElementById('newPass2').value;
+  if(p.length<3){ State._authError='Password minimal 3 karakter.'; render(); return; }
+  if(p!==p2){ State._authError='Konfirmasi password tidak cocok.'; render(); return; }
+  const user = findUser(State._forgotUsername);
+  user.password = p;
+  saveData();
+  State.authModal='login';
+  State._authError=null;
+  render();
+  toast('Password berhasil direset, silakan masuk.','🔐');
+}
+
+function logout(){
+  State.currentUser=null;
+  State.view='landing';
+  State.cart=[];
+  State.selectedKantinId=null;
+  clearSession();
+  render();
+}
+
+/* =========================================================
+   BUYER VIEW
+========================================================= */
+function renderBuyer(){
+  if(!State.selectedKantinId) return renderKantinPicker();
+  const kantin = kantins.find(k=>k.id===State.selectedKantinId);
+  if(!kantin){
+    // Kantin yang tadinya dipilih sudah tidak ada lagi
+    State.selectedKantinId = null;
+    return renderKantinPicker();
+  }
+
+  const q = State.search.toLowerCase();
+  let items = menuItems.filter(m=>{
+    const matchKantin = m.kantinId===kantin.id;
+    const matchCat = State.category==='semua' || m.category===State.category;
+    const matchSearch = m.name.toLowerCase().includes(q);
+    return matchKantin && matchCat && matchSearch;
+  });
+
+  const cards = items.length ? items.map(renderFoodCard).join('') : `
+    <div class="empty-state" style="grid-column:1/-1;">
+      <span class="em">🔍</span>
+      Menu tidak ditemukan. Coba kata kunci lain.
+    </div>`;
+
+  return `
+  <div class="nav">
+    <div class="logo">${kantin.emoji||'🍽️'} <em>${kantin.name}</em></div>
+    <div class="nav-search">
+      <span>🔎</span>
+      <input type="text" placeholder="Cari makanan atau minuman..." value="${State.search}" oninput="onSearch(this.value)">
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab ${State.category==='semua'?'active':''}" onclick="setCategory('semua')">Semua</button>
+      <button class="nav-tab ${State.category==='makanan'?'active':''}" onclick="setCategory('makanan')">Makanan</button>
+      <button class="nav-tab ${State.category==='minuman'?'active':''}" onclick="setCategory('minuman')">Minuman</button>
+    </div>
+    <div class="nav-right">
+      <button class="btn btn-line btn-sm" onclick="changeKantin()">🔁 Ganti Kantin</button>
+      <button class="btn btn-line btn-sm" onclick="openChat()">💬 Chat Admin</button>
+      <button class="btn btn-line btn-sm" onclick="openSettings()">⚙️ Pengaturan</button>
+      <button class="cart-btn" onclick="toggleCart(true)">🛒 Keranjang
+        ${cartCount()>0?`<span class="cart-badge">${cartCount()}</span>`:''}
+      </button>
+      <div class="user-pill" style="cursor:pointer;" onclick="openSettings()">👤 <b>${State.currentUser.username}</b></div>
+    </div>
+  </div>
+  <div class="page">
+    ${renderPickupNoticeBanner(kantin.id)}
+    <div class="section-head">
+      <h2>Menu Hari Ini</h2>
+      <span class="muted">${items.length} item tersedia</span>
+    </div>
+    <div class="grid">${cards}</div>
+  </div>`;
+}
+
+function renderPickupNoticeBanner(kantinId){
+  const myNotices = orders.filter(o=>
+    o.buyer===State.currentUser.username && o.kantinId===kantinId &&
+    o.pickupNotice && o.status!=='Selesai' && o.status!=='Dibatalkan'
+  );
+  if(!myNotices.length) return '';
+  return `
+  <div style="margin-bottom:16px;display:flex;flex-direction:column;gap:8px;">
+    ${myNotices.map(o=>`
+      <div style="background:#F3E8FF;border:1px solid #D8B4FE;border-radius:12px;padding:12px 14px;font-size:13.5px;color:#5B2A86;">
+        🔔 Pesanan <b>#${o.id}</b> bisa diambil <b>${o.pickupNotice.time}</b>${o.pickupNotice.note?` — ${o.pickupNotice.note}`:''}
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+/* ---------- Pemilihan Kantin/Server (buyer) ---------- */
+function renderKantinPicker(){
+  const q = (State.kantinSearch||'').toLowerCase();
+  const list = kantins.filter(k=> !q || k.name.toLowerCase().includes(q));
+
+  const cards = list.length ? list.map(k=>{
+    const itemCount = menuItems.filter(m=>m.kantinId===k.id).length;
+    return `
+    <div class="food-card" style="cursor:pointer;" onclick="chooseKantin(${k.id})">
+      <div class="food-emoji">${k.emoji||'🍽️'}</div>
+      <p class="food-name">${k.name}</p>
+      <p class="food-desc">${itemCount} menu tersedia</p>
+      <button class="btn btn-primary btn-block" onclick="event.stopPropagation();chooseKantin(${k.id})">Pilih Kantin</button>
+    </div>`;
+  }).join('') : `
+    <div class="empty-state" style="grid-column:1/-1;">
+      <span class="em">🏫</span>
+      Belum ada kantin yang tersedia. Tunggu admin membuat kantin baru.
+    </div>`;
+
+  return `
+  <div class="nav">
+    <div class="logo">🍽️ <em>Kantin</em>Pintar</div>
+    <div class="nav-search">
+      <span>🔎</span>
+      <input type="text" placeholder="Cari nama kantin..." value="${State.kantinSearch||''}" oninput="onKantinSearch(this.value)">
+    </div>
+    <div class="nav-right">
+      <button class="btn btn-line btn-sm" onclick="openChat()">💬 Chat Admin</button>
+      <button class="btn btn-line btn-sm" onclick="openSettings()">⚙️ Pengaturan</button>
+      <div class="user-pill" style="cursor:pointer;" onclick="openSettings()">👤 <b>${State.currentUser.username}</b></div>
+    </div>
+  </div>
+  <div class="page">
+    <div class="section-head">
+      <h2>Pilih Kantin</h2>
+      <span class="muted">${list.length} kantin ditemukan</span>
+    </div>
+    <div class="grid">${cards}</div>
+  </div>`;
+}
+
+function onKantinSearch(v){
+  const inputEl = document.querySelector('.nav-search input');
+  const caret = inputEl ? inputEl.selectionStart : v.length;
+  State.kantinSearch = v;
+  render();
+  const newInput = document.querySelector('.nav-search input');
+  if(newInput){ newInput.focus(); newInput.setSelectionRange(caret, caret); }
+}
+
+function chooseKantin(id){
+  State.selectedKantinId = id;
+  State.cart = [];
+  State.search = '';
+  State.category = 'semua';
+  saveSession(State.currentUser, id);
+  render();
+}
+
+function changeKantin(){
+  State.selectedKantinId = null;
+  State.cart = [];
+  State.kantinSearch = '';
+  saveSession(State.currentUser, null);
+  render();
+}
+
+function renderFoodCard(item){
+  const inCart = State.cart.find(c=>c.id===item.id);
+  const lowStock = item.stock<=5;
+  return `
+  <div class="food-card">
+    <div class="food-emoji">${item.emoji}</div>
+    <p class="food-name">${item.name}</p>
+    <p class="food-desc">${item.desc}</p>
+    <span class="stock-tag ${lowStock?'low':''}">${lowStock? 'Stok menipis: '+item.stock : 'Stok: '+item.stock}</span>
+    <div class="food-bottom">
+      <span class="food-price">${formatRp(item.price)}</span>
+      ${inCart ? `
+        <div class="qty-row">
+          <button onclick="changeQty(${item.id},-1)">−</button>
+          <span>${inCart.qty}</span>
+          <button onclick="changeQty(${item.id},1)">+</button>
+        </div>
+      ` : `<button class="add-btn" onclick="changeQty(${item.id},1)">+</button>`}
+    </div>
+  </div>`;
+}
+
+function onSearch(v){
+  const inputEl = document.querySelector('.nav-search input');
+  const caret = inputEl ? inputEl.selectionStart : v.length;
+  State.search = v;
+  render();
+  const newInput = document.querySelector('.nav-search input');
+  if(newInput){ newInput.focus(); newInput.setSelectionRange(caret, caret); }
+}
+function setCategory(c){ State.category=c; render(); }
+
+function changeQty(id, delta){
+  const item = menuItems.find(m=>m.id===id);
+  let entry = State.cart.find(c=>c.id===id);
+  if(!entry && delta>0){
+    if(item.stock<1){ toast('Stok habis!','⚠️'); return; }
+    State.cart.push({id,qty:1});
+    toast(`${item.name} ditambahkan ke keranjang`,'🛒');
+  } else if(entry){
+    const newQty = entry.qty + delta;
+    if(newQty > item.stock){ toast('Melebihi stok tersedia!','⚠️'); return; }
+    if(newQty<=0){ State.cart = State.cart.filter(c=>c.id!==id); }
+    else entry.qty = newQty;
+  }
+  render();
+}
+
+function toggleCart(open){ State.cartOpen=open; render(); }
+
+function renderCartModal(){
+  const rows = State.cart.map(c=>{
+    const item = menuItems.find(m=>m.id===c.id);
+    return `
+    <div class="cart-item">
+      <div class="em">${item.emoji}</div>
+      <div class="info">
+        <div class="n">${item.name}</div>
+        <div class="p">${formatRp(item.price)} x ${c.qty}</div>
+      </div>
+      <div class="qty-row">
+        <button onclick="changeQty(${item.id},-1)">−</button>
+        <span>${c.qty}</span>
+        <button onclick="changeQty(${item.id},1)">+</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="overlay" onclick="if(event.target===this) toggleCart(false)">
+    <div class="modal">
+      <button class="modal-close" onclick="toggleCart(false)">✕</button>
+      <h2>Keranjang Kamu</h2>
+      <p class="sub">${cartCount()} item dipilih</p>
+      ${State.cart.length? rows : `<div class="empty-state"><span class="em">🧺</span>Keranjang masih kosong</div>`}
+      ${State.cart.length? `
+        <div class="cart-total-row"><span>Total</span><span>${formatRp(cartTotal())}</span></div>
+        <button class="btn btn-primary btn-block" onclick="openCheckout()">Checkout</button>
+      ` : ''}
+    </div>
+  </div>`;
+}
+
+function openCheckout(){
+  State.cartOpen=false;
+  State.checkoutOpen=true;
+  State.paymentMethod=null;
+  State.promoCode='';
+  State.appliedPromo=null;
+  State.promoError=null;
+  render();
+}
+
+function getDiscountAmount(subtotal){
+  if(!State.appliedPromo) return 0;
+  const p = State.appliedPromo;
+  if(p.type==='persen') return Math.round(subtotal * p.value/100);
+  return Math.min(p.value, subtotal);
+}
+
+function applyPromo(){
+  const code = document.getElementById('promoInput').value.trim();
+  if(!code){ State.promoError='Masukkan kode promo terlebih dahulu.'; render(); return; }
+  const uname = (State.currentUser.username||'').toLowerCase();
+  const promo = promos.find(p=>p.code.toLowerCase()===code.toLowerCase() && p.active && p.kantinId===State.selectedKantinId && (!p.assignedTo || p.assignedTo.toLowerCase()===uname));
+  if(!promo){ State.promoError='Kode promo tidak valid atau sudah tidak aktif.'; State.appliedPromo=null; render(); return; }
+  State.appliedPromo = promo;
+  State.promoError = null;
+  render();
+  toast(`Promo ${promo.code} berhasil diterapkan!`,'🎉');
+}
+function removePromo(){ State.appliedPromo=null; State.promoCode=''; State.promoError=null; render(); }
+
+function renderCheckoutModal(){
+  const opts = paymentOptions.map(p=>`
+    <div class="pay-opt ${State.paymentMethod===p.id?'active':''} ${p.disabled?'disabled':''}"
+         onclick="${p.disabled ? 'notifyQrisUnavailable()' : `setPayment('${p.id}')`}">
+      <span class="ic">${p.ic}</span>${p.label}
+      ${p.number ? `<span class="pay-number">${p.number}</span>` : ''}
+      ${p.disabled ? `<span class="pay-unavailable">Belum tersedia</span>` : ''}
+    </div>`).join('');
+  const subtotal = cartTotal();
+  const discount = getDiscountAmount(subtotal);
+  const finalTotal = Math.max(subtotal - discount, 0);
+  const selectedMethod = paymentOptions.find(p=>p.id===State.paymentMethod);
+  return `
+  <div class="overlay" onclick="if(event.target===this) closeCheckout()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeCheckout()">✕</button>
+      <h2>Checkout Pesanan</h2>
+      <p class="sub">Selesaikan pembayaran untuk memproses pesananmu.</p>
+
+      <div class="field">
+        <label>Kode Promo (opsional)</label>
+        <div style="display:flex;gap:8px;">
+          <input id="promoInput" type="text" placeholder="Contoh: HEMAT10" value="${State.promoCode||''}" ${State.appliedPromo?'disabled':''} style="flex:1;">
+          ${State.appliedPromo
+            ? `<button class="btn btn-line btn-sm" onclick="removePromo()">Hapus</button>`
+            : `<button class="btn btn-line btn-sm" onclick="applyPromo()">Terapkan</button>`}
+        </div>
+        ${State.promoError? `<div class="error-msg" style="margin-top:8px;">${State.promoError}</div>`:''}
+        ${State.appliedPromo? `<div class="success-msg" style="margin-top:8px;">Promo "${State.appliedPromo.code}" aktif: ${State.appliedPromo.type==='persen'?State.appliedPromo.value+'%':formatRp(State.appliedPromo.value)} off</div>`:''}
+      </div>
+
+      <h2 style="font-size:15px;margin-top:20px;">Pilih Metode Pembayaran</h2>
+      <div class="pay-grid">${opts}</div>
+      ${selectedMethod && selectedMethod.number ? `
+        <div style="background:var(--mint-deep);border-radius:12px;padding:14px;margin-bottom:16px;text-align:center;">
+          <p class="muted" style="margin:0 0 4px;">Kirim pembayaran ke ${selectedMethod.label}</p>
+          <p class="mono" style="font-weight:700;font-size:16px;margin:0;">${selectedMethod.number}</p>
+        </div>` : ''}
+
+      <div class="cart-total-row" style="font-size:13.5px;border-top:none;padding-top:0;margin-bottom:6px;"><span>Subtotal</span><span>${formatRp(subtotal)}</span></div>
+      ${discount>0? `<div class="cart-total-row" style="font-size:13.5px;border-top:none;padding-top:0;margin-bottom:6px;color:var(--teal-deep);"><span>Diskon</span><span>-${formatRp(discount)}</span></div>`:''}
+      <div class="cart-total-row"><span>Total Bayar</span><span>${formatRp(finalTotal)}</span></div>
+
+      <button class="btn btn-teal btn-block" ${!State.paymentMethod?'disabled':''} onclick="confirmPayment()">Bayar Sekarang</button>
+    </div>
+  </div>`;
+}
+
+function setPayment(id){ State.paymentMethod=id; render(); }
+function notifyQrisUnavailable(){ toast('QRIS belum tersedia, silakan pilih metode lain','⚠️'); }
+function closeCheckout(){ State.checkoutOpen=false; render(); }
+
+function confirmPayment(){
+  if(!State.paymentMethod) return;
+  const items = State.cart.map(c=>{
+    const item = menuItems.find(m=>m.id===c.id);
+    item.stock -= c.qty;
+    return {name:item.name, emoji:item.emoji, qty:c.qty, price:item.price};
+  });
+  const subtotal = cartTotal();
+  const discount = getDiscountAmount(subtotal);
+  const finalTotal = Math.max(subtotal - discount, 0);
+  const methodInfo = paymentOptions.find(p=>p.id===State.paymentMethod);
+  const order = {
+    id: ++orderCounter,
+    kantinId: State.selectedKantinId,
+    buyer: State.currentUser.username,
+    items,
+    subtotal,
+    discount,
+    promoCode: State.appliedPromo ? State.appliedPromo.code : null,
+    total: finalTotal,
+    payment: methodInfo.label,
+    paymentNumber: methodInfo.number || null,
+    status: 'Menunggu',
+    date: new Date().toLocaleString('id-ID'),
+    cashReceived: null,
+    change: null,
+  };
+  orders.unshift(order);
+  saveData();
+  State.cart=[];
+  State.checkoutOpen=false;
+  State.appliedPromo=null;
+  State.promoCode='';
+  State.receiptOrder=order;
+  render();
+}
+
+function renderReceiptModal(){
+  const o = State.receiptOrder;
+  const rows = o.items.map(i=>`
+    <div class="ticket-row"><span>${i.emoji} ${i.name} x${i.qty}</span><span>${formatRp(i.price*i.qty)}</span></div>
+  `).join('');
+  return `
+  <div class="overlay" onclick="if(event.target===this) closeReceipt()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeReceipt()">✕</button>
+      <div class="ticket">
+        <div class="ticket-head">
+          <div class="check">✓</div>
+          <h3>Pembayaran Berhasil</h3>
+          <span class="muted mono">Order #${o.id}</span>
+        </div>
+        ${rows}
+        ${o.promoCode? `
+        <div class="ticket-row"><span>Subtotal</span><span>${formatRp(o.subtotal)}</span></div>
+        <div class="ticket-row"><span>Promo (${o.promoCode})</span><span>-${formatRp(o.discount)}</span></div>
+        ` : ''}
+        <div class="ticket-row total"><span>Total</span><span>${formatRp(o.total)}</span></div>
+        <div class="ticket-row"><span>Metode</span><span>${o.payment}</span></div>
+        ${o.paymentNumber ? `<div class="ticket-row"><span>Kirim ke</span><span>${o.paymentNumber}</span></div>` : ''}
+        <div class="ticket-meta">${o.date} · Silakan tunjukkan struk ini saat mengambil pesanan</div>
+      </div>
+    </div>
+  </div>`;
+}
+function closeReceipt(){ State.receiptOrder=null; render(); }
+
+/* =========================================================
+   ADMIN VIEW
+========================================================= */
+function renderAdmin(){
+  const myKantin = kantins.find(k=>k.id===State.currentUser.kantinId);
+  const pendingCount = orders.filter(o=>o.status==='Menunggu' && o.kantinId===State.currentUser.kantinId).length;
+  return `
+  <div class="nav">
+    <div class="logo">🛠️ <em>${myKantin?myKantin.name:'Kantin'}</em> Admin</div>
+    <span class="muted" style="color:#8FE0B8;font-weight:600;font-size:12.5px;">🟢 Live · pesanan buyer masuk otomatis</span>
+    <div class="nav-right">
+      ${State.currentUser.superAdmin ? `<button class="btn btn-line btn-sm" onclick="openAdminCode()">🔑 Kode Admin</button>` : ''}
+      <button class="btn btn-line btn-sm" onclick="openKantinSettings()">⚙️ Kantin</button>
+      <button class="btn btn-line btn-sm" onclick="openSettings()">🧑‍💼 Pengaturan</button>
+      <div class="user-pill" style="cursor:pointer;" onclick="openSettings()">👤 <b>${State.currentUser.username}</b> · ${State.currentUser.superAdmin?'Admin Utama':'Admin'}</div>
+    </div>
+  </div>
+  <div class="page">
+    <div class="admin-tabs">
+      <button class="chip ${State.adminTab==='menu'?'active':''}" onclick="setAdminTab('menu')">📋 Kelola Menu</button>
+      <button class="chip ${State.adminTab==='pesanan'?'active':''}" onclick="setAdminTab('pesanan')">🧾 Daftar Pesanan${pendingCount? ` <span class="cart-badge" style="position:static;margin-left:4px;">${pendingCount}</span>`:''}</button>
+      <button class="chip ${State.adminTab==='riwayat'?'active':''}" onclick="setAdminTab('riwayat')">💳 Riwayat Pembayaran</button>
+      <button class="chip ${State.adminTab==='promosi'?'active':''}" onclick="setAdminTab('promosi')">🎉 Promosi</button>
+    </div>
+    ${State.adminTab==='menu' ? renderAdminMenu()
+      : State.adminTab==='pesanan' ? renderAdminOrders()
+      : State.adminTab==='riwayat' ? renderAdminRiwayat()
+      : renderAdminPromosi()}
+  </div>`;
+}
+
+function setAdminTab(t){ State.adminTab=t; render(); }
+
+/* ---------- Pengaturan Kantin (admin) ---------- */
+function openKantinSettings(){ State.kantinSettingsOpen=true; render(); }
+function closeKantinSettings(){ State.kantinSettingsOpen=false; render(); }
+
+function renderKantinSettingsModal(){
+  const k = kantins.find(x=>x.id===State.currentUser.kantinId);
+  return `
+  <div class="overlay" onclick="if(event.target===this) closeKantinSettings()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeKantinSettings()">✕</button>
+      <h2>Pengaturan Kantin</h2>
+      <p class="sub">Nama & ikon ini yang akan dilihat buyer saat memilih kantin.</p>
+      <div class="field"><label>Nama Kantin / Server</label><input id="kName" type="text" value="${k?k.name:''}" placeholder="Contoh: Kantin Blok A"></div>
+      <div class="field"><label>Emoji Ikon</label><input id="kEmoji" type="text" value="${k?(k.emoji||'🍽️'):'🍽️'}" placeholder="Contoh: 🍱"></div>
+      <button class="btn btn-primary btn-block" onclick="saveKantinSettings()">Simpan</button>
+    </div>
+  </div>`;
+}
+
+function saveKantinSettings(){
+  const name = document.getElementById('kName').value.trim();
+  const emoji = document.getElementById('kEmoji').value.trim() || '🍽️';
+  if(name.length<3){ toast('Nama kantin minimal 3 karakter','⚠️'); return; }
+  const k = kantins.find(x=>x.id===State.currentUser.kantinId);
+  k.name = name;
+  k.emoji = emoji;
+  saveData();
+  State.kantinSettingsOpen=false;
+  render();
+  toast('Kantin berhasil diperbarui','✅');
+}
+
+function renderAdminMenu(){
+  const myMenuItems = menuItems.filter(m=>m.kantinId===State.currentUser.kantinId);
+  const rows = myMenuItems.map(m=>`
+    <tr>
+      <td>${m.emoji} ${m.name}</td>
+      <td>${m.category==='makanan'?'Makanan':'Minuman'}</td>
+      <td class="mono">${formatRp(m.price)}</td>
+      <td>${m.stock}</td>
+      <td class="row-actions">
+        <button class="btn btn-line btn-sm" onclick="editMenuItem(${m.id})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteMenuItem(${m.id})">Hapus</button>
+      </td>
+    </tr>`).join('');
+  return `
+  <div class="section-head">
+    <h2>Kelola Menu (${myMenuItems.length})</h2>
+    <button class="btn btn-primary btn-sm" onclick="openMenuForm()">+ Tambah Menu</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Nama</th><th>Kategori</th><th>Harga</th><th>Stok</th><th>Aksi</th></tr></thead>
+      <tbody>${rows.length?rows:`<tr><td colspan="5"><div class="empty-state"><span class="em">🍽️</span>Belum ada menu di kantinmu. Tambahkan menu pertama!</div></td></tr>`}</tbody>
+    </table>
+  </div>`;
+}
+
+function renderAdminOrders(){
+  const myOrders = orders.filter(o=>o.kantinId===State.currentUser.kantinId);
+  if(!myOrders.length){
+    return `<div class="empty-state"><span class="em">🧾</span>Belum ada pesanan masuk.</div>`;
+  }
+  const rows = myOrders.map(o=>`
+    <tr>
+      <td class="mono">#${o.id}</td>
+      <td>${o.buyer}</td>
+      <td>${o.items.map(i=>`${i.name} x${i.qty}`).join(', ')}</td>
+      <td class="mono">${formatRp(o.total)}${o.promoCode?`<br><span class="muted" style="font-size:11px;">Promo: ${o.promoCode}</span>`:''}</td>
+      <td>${o.payment}</td>
+      <td class="mono">${o.payment==='Tunai' && o.change!=null ? formatRp(o.change) : '-'}</td>
+      <td><span class="status-badge status-${o.status}">${statusLabels[o.status]||o.status}</span>${o.pickupNotice?`<br><span class="muted" style="font-size:11px;">🔔 ${o.pickupNotice.time}</span>`:''}</td>
+      <td>
+        <div class="row-actions" style="flex-wrap:wrap;">
+          <select class="status-select" onchange="updateOrderStatus(${o.id}, this.value)">
+            ${orderStatuses.map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${statusLabels[s]}</option>`).join('')}
+          </select>
+          ${(o.status==='Menunggu'||o.status==='Diproses') ? `<button class="btn btn-teal btn-sm" onclick="markSiap(${o.id})">✅ Siap</button>`:''}
+          ${(o.status!=='Selesai'&&o.status!=='Dibatalkan') ? `<button class="btn btn-line btn-sm" onclick="openPickupNotice(${o.id})">🔔 Info Waktu Ambil</button>`:''}
+          ${o.payment==='Tunai' ? `<button class="btn btn-line btn-sm" onclick="openKembalian(${o.id})">💵 Kembalian</button>`:''}
+        </div>
+      </td>
+    </tr>`).join('');
+  return `
+  <div class="section-head"><h2>Daftar Pesanan (${myOrders.length})</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Buyer</th><th>Item</th><th>Total</th><th>Metode</th><th>Kembalian</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+function updateOrderStatus(id, status){
+  const o = orders.find(x=>x.id===id);
+  o.status = status;
+  saveData();
+  render();
+  toast(`Status pesanan #${id} diperbarui menjadi ${statusLabels[status]||status}`,'🔄');
+}
+
+function markSiap(id){
+  const o = orders.find(x=>x.id===id);
+  o.status = 'Siap';
+  saveData();
+  render();
+  toast(`Pesanan #${id} siap diambil!`,'🔔');
+}
+
+/* ---------- Info Waktu Ambil (notifikasi ke buyer) ---------- */
+function openPickupNotice(id){ State.pickupNoticeOrderId=id; render(); }
+function closePickupNotice(){ State.pickupNoticeOrderId=null; render(); }
+
+function renderPickupNoticeModal(){
+  const order = orders.find(o=>o.id===State.pickupNoticeOrderId);
+  if(!order) return '';
+  return `
+  <div class="overlay" onclick="if(event.target===this) closePickupNotice()">
+    <div class="modal">
+      <button class="modal-close" onclick="closePickupNotice()">✕</button>
+      <h2>🔔 Kasih Tahu Waktu Ambil</h2>
+      <p class="sub">Pesanan #${order.id} · ${order.buyer}. Buyer akan langsung mendapat notifikasi di aplikasinya.</p>
+      <div class="field"><label>Perkiraan Waktu Ambil</label><input id="pickupTimeInput" type="text" placeholder="Contoh: 12:15 atau 10 menit lagi" value="${order.pickupNotice?order.pickupNotice.time:''}"></div>
+      <div class="field"><label>Catatan (opsional)</label><input id="pickupNoteInput" type="text" placeholder="Contoh: Ambil di kasir ya" value="${order.pickupNotice?(order.pickupNotice.note||''):''}"></div>
+      <button class="btn btn-primary btn-block" onclick="kirimPickupNotice()">Kirim Notifikasi ke Buyer</button>
+    </div>
+  </div>`;
+}
+
+function kirimPickupNotice(){
+  const order = orders.find(o=>o.id===State.pickupNoticeOrderId);
+  const time = document.getElementById('pickupTimeInput').value.trim();
+  const note = document.getElementById('pickupNoteInput').value.trim();
+  if(!time){ toast('Isi perkiraan waktu ambil dulu','⚠️'); return; }
+  order.pickupNotice = { time, note, sentAt: Date.now() };
+  saveData();
+  State.pickupNoticeOrderId = null;
+  render();
+  toast(`Notifikasi waktu ambil terkirim ke ${order.buyer}`,'🔔');
+}
+
+/* ---------- Kembalian Uang (Tunai) ---------- */
+function openKembalian(id){
+  State.kembalianOrderId = id;
+  State.kembalianResult = null;
+  render();
+}
+function closeKembalian(){ State.kembalianOrderId=null; State.kembalianResult=null; render(); }
+
+function hitungKembalian(){
+  const order = orders.find(o=>o.id===State.kembalianOrderId);
+  const received = parseInt(document.getElementById('cashReceivedInput').value) || 0;
+  if(received < order.total){ toast('Uang diterima kurang dari total belanja','⚠️'); return; }
+  State.kembalianResult = { received, change: received - order.total };
+  render();
+}
+
+function simpanKembalian(){
+  const order = orders.find(o=>o.id===State.kembalianOrderId);
+  if(!State.kembalianResult){ toast('Hitung kembalian terlebih dahulu','⚠️'); return; }
+  order.cashReceived = State.kembalianResult.received;
+  order.change = State.kembalianResult.change;
+  saveData();
+  State.kembalianOrderId = null;
+  State.kembalianResult = null;
+  render();
+  toast('Kembalian tersimpan pada pesanan','✅');
+}
+
+function renderKembalianModal(){
+  const order = orders.find(o=>o.id===State.kembalianOrderId);
+  const result = State.kembalianResult;
+  return `
+  <div class="overlay" onclick="if(event.target===this) closeKembalian()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeKembalian()">✕</button>
+      <h2>Hitung Kembalian</h2>
+      <p class="sub">Pesanan #${order.id} · ${order.buyer}</p>
+      <div class="cart-total-row" style="font-size:14px;border-top:none;padding-top:0;"><span>Total Belanja</span><span>${formatRp(order.total)}</span></div>
+      <div class="field"><label>Uang Diterima (Rp)</label><input id="cashReceivedInput" type="number" placeholder="Contoh: 50000" value="${order.cashReceived||''}"></div>
+      <button class="btn btn-line btn-block" onclick="hitungKembalian()">Hitung Kembalian</button>
+      ${result? `
+        <div class="success-msg" style="margin-top:14px;text-align:center;font-size:15px;">
+          Kembalian untuk pembeli: <b>${formatRp(result.change)}</b>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="simpanKembalian()">Simpan Kembalian</button>
+      ` : ''}
+    </div>
+  </div>`;
+}
+
+/* ---------- Riwayat Pembayaran ---------- */
+function renderAdminRiwayat(){
+  const filterMethod = State.riwayatFilter || 'semua';
+  const q = (State.riwayatSearch||'').toLowerCase();
+
+  const myOrders = orders.filter(o=>o.kantinId===State.currentUser.kantinId);
+
+  let list = myOrders.filter(o=>{
+    const matchMethod = filterMethod==='semua' || o.payment===filterMethod;
+    const matchSearch = !q || o.buyer.toLowerCase().includes(q) || String(o.id).includes(q);
+    return matchMethod && matchSearch;
+  });
+
+  const totalPendapatan = myOrders.filter(o=>o.status!=='Dibatalkan').reduce((s,o)=>s+o.total,0);
+  const totalTransaksi = myOrders.length;
+  const methodCount = {};
+  myOrders.forEach(o=>{ methodCount[o.payment]=(methodCount[o.payment]||0)+1; });
+  const favMethod = Object.keys(methodCount).sort((a,b)=>methodCount[b]-methodCount[a])[0] || '-';
+
+  const methodChips = ['semua', ...paymentOptions.map(p=>p.label)].map(m=>`
+    <button class="chip ${filterMethod===m?'active':''}" onclick="setRiwayatFilter('${m}')">${m==='semua'?'Semua Metode':m}</button>
+  `).join('');
+
+  const rows = list.length ? list.map(o=>`
+    <tr>
+      <td class="mono">#${o.id}</td>
+      <td>${o.buyer}</td>
+      <td>${o.date}</td>
+      <td>${o.items.map(i=>`${i.name} x${i.qty}`).join(', ')}</td>
+      <td>${o.payment}</td>
+      <td>${o.promoCode || '-'}</td>
+      <td class="mono">${o.payment==='Tunai' && o.change!=null ? formatRp(o.change) : '-'}</td>
+      <td class="mono">${formatRp(o.total)}</td>
+      <td><span class="status-badge status-${o.status}">${statusLabels[o.status]||o.status}</span></td>
+    </tr>`).join('') : `<tr><td colspan="9"><div class="empty-state"><span class="em">💳</span>Tidak ada transaksi yang cocok.</div></td></tr>`;
+
+  return `
+  <div class="section-head"><h2>Riwayat Pembayaran</h2><span class="muted">${totalTransaksi} total transaksi</span></div>
+
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:22px;">
+    <div class="food-card" style="align-items:flex-start;">
+      <span class="muted">Total Pendapatan</span>
+      <p class="food-name mono" style="font-size:19px;color:var(--teal-deep);">${formatRp(totalPendapatan)}</p>
+    </div>
+    <div class="food-card" style="align-items:flex-start;">
+      <span class="muted">Jumlah Transaksi</span>
+      <p class="food-name mono" style="font-size:19px;">${totalTransaksi}</p>
+    </div>
+    <div class="food-card" style="align-items:flex-start;">
+      <span class="muted">Metode Terpopuler</span>
+      <p class="food-name" style="font-size:19px;color:var(--orange-deep);">${favMethod}</p>
+    </div>
+  </div>
+
+  <div class="nav-search" style="max-width:320px;margin-bottom:14px;background:var(--card);border:1.5px solid var(--line);">
+    <span>🔎</span>
+    <input style="color:var(--ink);" type="text" placeholder="Cari buyer atau ID pesanan..." value="${State.riwayatSearch||''}" oninput="onRiwayatSearch(this.value)">
+  </div>
+  <div class="chip-row">${methodChips}</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Buyer</th><th>Tanggal</th><th>Item</th><th>Metode</th><th>Promo</th><th>Kembalian</th><th>Total</th><th>Status</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+function setRiwayatFilter(m){ State.riwayatFilter=m; render(); }
+function onRiwayatSearch(v){
+  const inputEl = document.querySelector('#app .nav-search input');
+  const caret = inputEl ? inputEl.selectionStart : v.length;
+  State.riwayatSearch = v;
+  render();
+  const newInput = document.querySelector('#app .nav-search input');
+  if(newInput){ newInput.focus(); newInput.setSelectionRange(caret, caret); }
+}
+
+function deleteMenuItem(id){
+  menuItems = menuItems.filter(m=>m.id!==id);
+  saveData();
+  render();
+  toast('Menu dihapus','🗑️');
+}
+
+function openMenuForm(){
+  State.menuFormOpen=true;
+  State.editingItemId=null;
+  render();
+}
+function editMenuItem(id){
+  State.menuFormOpen=true;
+  State.editingItemId=id;
+  render();
+}
+function closeMenuForm(){ State.menuFormOpen=false; render(); }
+
+function renderMenuFormModal(){
+  const editing = State.editingItemId ? menuItems.find(m=>m.id===State.editingItemId) : null;
+  return `
+  <div class="overlay" onclick="if(event.target===this) closeMenuForm()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeMenuForm()">✕</button>
+      <h2>${editing?'Edit Menu':'Tambah Menu Baru'}</h2>
+      <p class="sub">Lengkapi detail item menu kantin.</p>
+      <div class="field"><label>Nama Item</label><input id="mName" type="text" value="${editing?editing.name:''}" placeholder="Contoh: Nasi Goreng"></div>
+      <div class="field"><label>Kategori</label>
+        <select id="mCategory">
+          <option value="makanan" ${editing&&editing.category==='makanan'?'selected':''}>Makanan</option>
+          <option value="minuman" ${editing&&editing.category==='minuman'?'selected':''}>Minuman</option>
+        </select>
+      </div>
+      <div class="field"><label>Emoji Ikon</label><input id="mEmoji" type="text" value="${editing?editing.emoji:'🍽️'}" placeholder="Contoh: 🍛"></div>
+      <div class="field"><label>Harga (Rp)</label><input id="mPrice" type="number" value="${editing?editing.price:''}" placeholder="Contoh: 15000"></div>
+      <div class="field"><label>Stok</label><input id="mStock" type="number" value="${editing?editing.stock:''}" placeholder="Contoh: 20"></div>
+      <div class="field"><label>Deskripsi Singkat</label><input id="mDesc" type="text" value="${editing?editing.desc:''}" placeholder="Deskripsi menu"></div>
+      <button class="btn btn-primary btn-block" onclick="saveMenuItem()">${editing?'Simpan Perubahan':'Tambah Menu'}</button>
+    </div>
+  </div>`;
+}
+
+function saveMenuItem(){
+  const name = document.getElementById('mName').value.trim();
+  const category = document.getElementById('mCategory').value;
+  const emoji = document.getElementById('mEmoji').value.trim() || '🍽️';
+  const price = parseInt(document.getElementById('mPrice').value) || 0;
+  const stock = parseInt(document.getElementById('mStock').value) || 0;
+  const desc = document.getElementById('mDesc').value.trim();
+
+  if(!name || price<=0){ toast('Nama dan harga wajib diisi dengan benar','⚠️'); return; }
+
+  if(State.editingItemId){
+    const item = menuItems.find(m=>m.id===State.editingItemId);
+    Object.assign(item,{name,category,emoji,price,stock,desc});
+    toast('Menu berhasil diperbarui','✅');
+  } else {
+    menuItems.push({id:nextId(),name,category,emoji,price,stock,desc,kantinId:State.currentUser.kantinId});
+    toast('Menu baru berhasil ditambahkan','✅');
+  }
+  saveData();
+  State.menuFormOpen=false;
+  render();
+}
+
+/* =========================================================
+   ADMIN: PROMOSI
+========================================================= */
+function renderAdminPromosi(){
+  const myPromos = promos.filter(p=>p.kantinId===State.currentUser.kantinId);
+  const rows = myPromos.map(p=>`
+    <tr>
+      <td class="mono">${p.code}</td>
+      <td>${p.type==='persen' ? p.value+'%' : formatRp(p.value)}</td>
+      <td>${p.desc || '-'}${p.assignedTo?`<br><span class="mono" style="font-size:11px;color:#7C3AED;">🎁 khusus @${p.assignedTo}</span>`:''}</td>
+      <td><button class="promo-toggle ${p.active?'on':'off'}" onclick="togglePromoActive(${p.id})">${p.active?'Aktif':'Nonaktif'}</button></td>
+      <td class="row-actions">
+        <button class="btn btn-line btn-sm" onclick="editPromo(${p.id})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deletePromo(${p.id})">Hapus</button>
+      </td>
+    </tr>`).join('');
+  return `
+  <div class="section-head">
+    <h2>Promosi (${myPromos.length})</h2>
+    <button class="btn btn-primary btn-sm" onclick="openPromoForm()">+ Tambah Promo</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Kode</th><th>Diskon</th><th>Deskripsi</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody>${myPromos.length ? rows : `<tr><td colspan="5"><div class="empty-state"><span class="em">🎉</span>Belum ada promo. Tambahkan promo pertama!</div></td></tr>`}</tbody>
+    </table>
+  </div>`;
+}
+
+function openPromoForm(){ State.promoFormOpen=true; State.editingPromoId=null; render(); }
+function editPromo(id){ State.promoFormOpen=true; State.editingPromoId=id; render(); }
+function closePromoForm(){ State.promoFormOpen=false; render(); }
+
+function togglePromoActive(id){
+  const p = promos.find(x=>x.id===id);
+  p.active = !p.active;
+  saveData();
+  render();
+  toast(`Promo ${p.code} ${p.active?'diaktifkan':'dinonaktifkan'}`,'🔄');
+}
+
+function deletePromo(id){
+  const p = promos.find(x=>x.id===id);
+  promos = promos.filter(x=>x.id!==id);
+  saveData();
+  render();
+  toast(`Promo ${p.code} dihapus`,'🗑️');
+}
+
+function renderPromoFormModal(){
+  const editing = State.editingPromoId ? promos.find(p=>p.id===State.editingPromoId) : null;
+  return `
+  <div class="overlay" onclick="if(event.target===this) closePromoForm()">
+    <div class="modal">
+      <button class="modal-close" onclick="closePromoForm()">✕</button>
+      <h2>${editing?'Edit Promo':'Tambah Promo Baru'}</h2>
+      <p class="sub">Buat kode promo untuk diterapkan buyer saat checkout.</p>
+      <div class="field"><label>Kode Promo</label><input id="pCode" type="text" value="${editing?editing.code:''}" placeholder="Contoh: HEMAT10"></div>
+      <div class="field"><label>Tipe Diskon</label>
+        <select id="pType">
+          <option value="persen" ${editing&&editing.type==='persen'?'selected':''}>Persen (%)</option>
+          <option value="nominal" ${editing&&editing.type==='nominal'?'selected':''}>Nominal (Rp)</option>
+        </select>
+      </div>
+      <div class="field"><label>Nilai Diskon</label><input id="pValue" type="number" value="${editing?editing.value:''}" placeholder="Contoh: 10"></div>
+      <div class="field"><label>Deskripsi</label><input id="pDesc" type="text" value="${editing?editing.desc:''}" placeholder="Deskripsi promo"></div>
+      <div class="field">
+        <label>🎁 Kirim Khusus ke Buyer (opsional)</label>
+        <input id="pAssignedTo" type="text" list="buyerListDatalist" value="${editing&&editing.assignedTo?editing.assignedTo:''}" placeholder="Kosongkan untuk promo umum">
+        <datalist id="buyerListDatalist">
+          ${users.filter(u=>u.role==='buyer').map(u=>`<option value="${u.username}"></option>`).join('')}
+        </datalist>
+        <p class="muted" style="margin:6px 0 0;font-size:11.5px;">Isi username buyer supaya promo ini masuk ke 🎁 Kotak Hadiah miliknya saja. Kosongkan kalau promo untuk semua orang (pakai kode manual).</p>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="savePromo()">${editing?'Simpan Perubahan':'Tambah Promo'}</button>
+    </div>
+  </div>`;
+}
+
+function savePromo(){
+  const code = document.getElementById('pCode').value.trim().toUpperCase();
+  const type = document.getElementById('pType').value;
+  const value = parseInt(document.getElementById('pValue').value) || 0;
+  const desc = document.getElementById('pDesc').value.trim();
+  const assignedToRaw = document.getElementById('pAssignedTo').value.trim();
+  const assignedTo = assignedToRaw ? assignedToRaw.replace(/^@/,'') : null;
+
+  if(!code || value<=0){ toast('Kode dan nilai diskon wajib diisi dengan benar','⚠️'); return; }
+  if(assignedTo && !users.find(u=>u.role==='buyer' && u.username.toLowerCase()===assignedTo.toLowerCase())){
+    toast('Username buyer tujuan tidak ditemukan','⚠️'); return;
+  }
+
+  if(State.editingPromoId){
+    const p = promos.find(x=>x.id===State.editingPromoId);
+    Object.assign(p,{code,type,value,desc,assignedTo});
+    toast('Promo berhasil diperbarui','✅');
+  } else {
+    if(promos.find(p=>p.kantinId===State.currentUser.kantinId && p.code.toLowerCase()===code.toLowerCase())){ toast('Kode promo sudah dipakai di kantinmu','⚠️'); return; }
+    promos.push({id:nextId(),code,type,value,desc,active:true,kantinId:State.currentUser.kantinId,assignedTo});
+    toast(assignedTo ? `Hadiah promo terkirim ke @${assignedTo}!` : 'Promo baru berhasil ditambahkan','🎉');
+  }
+  saveData();
+  State.promoFormOpen=false;
+  render();
+}
+
+/* =========================================================
+   INIT
+========================================================= */
+applyTheme(getSavedTheme());
+initApp();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
